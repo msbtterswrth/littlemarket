@@ -6,11 +6,6 @@
             max-width:300px!important;
         }
     }
-    .nav-toggle {
-        color:$dk-blue;
-        font-size:30px;
-        margin-top:10px;
-    }
     .menu {
         @include breakpoint(xs){
             position: fixed;
@@ -28,7 +23,7 @@
         }
         nav {
             @include breakpoint(xs){
-                background:$dk-blue;
+                background:$blue;
                 padding:20px;
             }
             ul:not(.contextual-links) {
@@ -97,7 +92,7 @@
                         }
                     }
                     a:not(.btn) {
-                        color:$blue-gray;
+                        color:$gray;
                         font-size: 18px;
                         position: relative;
                         text-decoration:none;
@@ -123,40 +118,6 @@
                     }
                 }
             }
-            &.utility {
-                margin-bottom:10px;
-                @include breakpoint(xs){
-                    background:$blue;
-                    margin-bottom:0;
-                }
-                ul {
-                    li {
-                        a {
-                            &:not(.btn) {
-                                color:$gray;
-                                font-size:16px;
-                                @include breakpoint(xs) {
-                                    font-size:18px;
-                                    color:#fff;
-                                }
-                                &:hover, &:focus {
-                                    color:$blue;
-                                    @include breakpoint(xs) {
-                                        color:#fff;
-                                    }
-                                }
-                            }
-                            &.btn {
-                                color:#fff;
-                                font-size: 14px;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .sidenav-toggle {
-            display:none;
         }
     }    
 }

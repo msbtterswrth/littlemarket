@@ -1,11 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Merriweather:400,400i,700|Source+Sans+Pro:400,400i,700');
+
+//ICONS
 @font-face {
   font-family: 'icomoon';
-  src:  url('/themes/bluewave/fonts/icomoon.eot?flchgt');
-  src:  url('/themes/bluewave/fonts/icomoon.eot?flchgt#iefix') format('embedded-opentype'),
-    url('/themes/bluewave/fonts/icomoon.ttf?flchgt') format('truetype'),
-    url('/themes/bluewave/fonts/icomoon.woff?flchgt') format('woff'),
-    url('/themes/bluewave/fonts/icomoon.svg?flchgt#icomoon') format('svg');
+  src:  url('/themes/littlemarket/fonts/icomoon.eot?eptqsu');
+  src:  url('/themes/littlemarket/fonts/icomoon.eot?eptqsu#iefix') format('embedded-opentype'),
+    url('/themes/littlemarket/fonts/icomoon.ttf?eptqsu') format('truetype'),
+    url('/themes/littlemarket/fonts/icomoon.woff?eptqsu') format('woff'),
+    url('/themes/littlemarket/fonts/icomoon.svg?eptqsu#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,26 +26,59 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.icon-close:before {
-  content: "\e5cd";
+.icon-right-arrow:before {
+  content: "\e317";
 }
-.icon-bookmark:before {
-  content: "\e431";
+.icon-left-arrow:before {
+  content: "\e318";
 }
-.icon-retweet:before {
-  content: "\e040";
+.icon-double-arrow-left:before {
+  content: "\f100";
 }
-.icon-send:before {
-  content: "\e163";
+.icon-double-arrow-right:before {
+  content: "\f101";
 }
-.icon-secure:before {
-  content: "\e8e8";
+.icon-plus:before {
+  content: "\e910";
 }
-.icon-gov:before {
-  content: "\e84f";
+.icon-minus:before {
+  content: "\e911";
+}
+.icon-play:before {
+  content: "\f04b";
 }
 .icon-pdf:before {
-  content: "\e415";
+  content: "\f1c1";
+}
+.icon-print:before {
+  content: "\f02f";
+}
+.icon-location:before {
+  content: "\f124";
+}
+.icon-locations:before {
+  content: "\e90d";
+}
+.icon-calendar:before {
+  content: "\e909";
+}
+.icon-star-half:before {
+  content: "\f089";
+}
+.icon-star:before {
+  content: "\f005";
+}
+.icon-envelope:before {
+  content: "\f0e0";
+}
+.icon-close:before {
+  content: "\e902";
+}
+.icon-menu:before {
+  content: "\e901";
+}
+.icon-search:before {
+  content: "\e900";
 }
 .icon-twitter:before {
   content: "\f099";
@@ -51,32 +86,164 @@
 .icon-facebook:before {
   content: "\f09a";
 }
-.icon-youtube:before {
-  content: "\f16a";
+.icon-instagram:before {
+  content: "\f16d";
 }
-.icon-slack:before {
-  content: "\f198";
-}
-.icon-arrow-left:before {
-  content: "\e900";
-}
-.icon-arrow-right:before {
-  content: "\e901";
-}
-.icon-arrow-down:before {
-  content: "\e902";
-}
-.icon-menu:before {
-  content: "\e906";
-}
-.icon-search:before {
-  content: "\e907";
-}
-.icon-phone:before {
-  content: "\e909";
-}
-.icon-calendar:before {
-  content: "\e90b";
+
+//TYPOGRAPHY
+body {    
+    text-rendering: optimizeLegibility;
+    font-size:16px;
+    font-family:$font-ss;
+    color:$gray;    
+    img {
+        max-width:100%;
+        height:auto;
+        @include breakpoint(xs) {
+            max-width:100%!important;
+        }
+        &.full-width {
+            height: auto;
+            width: 100%;
+            margin:20px 0 10px;
+        }
+        &.img-right {
+            float:right;
+            margin-left:20px;
+            margin-bottom:20px;
+            @include breakpoint(xs) {
+                float:none;
+                margin-left:0;
+            }
+        }
+        &.img-left {
+            float:left;
+            margin-right:20px;
+            margin-bottom:20px;
+            @include breakpoint(xs) {
+                float:none;
+                margin-right:0;
+            }
+        }
+    }
+    h1 {
+        font-family: $font-mw;
+        font-size:45px;
+        font-weight:700;
+        color:$blue;
+        line-height: 75px;
+        @include breakpoint(xs) {
+            font-size: 40px;
+            line-height: 55px;
+        }
+    }
+    h2 {
+        color:$blue;
+        font-family: $font-mw;
+        font-size:35px;
+        font-weight:700;
+        line-height: 48px;
+        margin:0 0 20px 0;
+        letter-spacing:1px;
+        @include breakpoint(xs) {
+            font-size: 26px;
+            line-height: 32px;
+        }
+    }
+    h3 {
+        color:$dk-gray;
+        font-family:$font-ss;
+        font-size: 24px;
+        font-weight: 700;
+        margin:30px 0 18px 0;
+        @include breakpoint(xs) {
+            font-size: 20px;
+        }
+    }
+    h4 {
+        font-size:20px;
+        margin:30px 0 18px 0;
+    }
+    p {
+        font-size:16px;
+        line-height:22px;
+        margin-bottom:20px;
+        &.lead {
+            text-transform:none;
+            font-weight:200;
+            font-family:$font-ss;
+            font-size:35px;
+            line-height:40px;
+            margin:0 0 30px 0;
+        }
+    }
+    a {
+        text-decoration: none;
+        @include transition(color .3s linear);
+    }
+    blockquote {
+        margin:30px 0;
+        border-left:5px solid $blue;
+        &.pull-right {
+            border-left: none;
+            border-right:5px solid $gold;
+            float:none!important;
+        }
+        p {
+            font-family:$font-mw, serif;
+            color:$dk-gray;
+            font-style:italic;
+            font-size:21px;
+            font-weight:600;
+            line-height:30px;
+        }
+        strong {
+            color:$gray;
+            font-style:normal;
+            font-weight:400;
+            font-family:$font-ss;
+        }
+    }
+    figure {
+        &.align-left {
+            margin:10px 20px 10px 0;
+        }
+        &.align-right {
+            margin:10px 0 10px 20px;
+        }
+        figcaption {
+            font-family:$font-ss;
+            color:$gray;
+            margin-top:10px;
+            display:block;
+            font-size:14px;
+        }
+    }
+    table {
+        border:none;
+        tr {
+            th {
+                border:none;
+                background:$blue; 
+                font-family:$font-ss;
+                color:#fff;
+                padding:15px 30px;
+                font-weight:700;
+                text-transform:uppercase;   
+            }
+            td {
+                border:none;
+                background:#fff;
+                padding:10px;
+            }
+            &:nth-of-type(2n) {
+                td {
+                    background:$lt-gray;
+                    border-top:1px solid $gray;
+                }
+            }
+        }
+    }
 }
 
 .typography {
