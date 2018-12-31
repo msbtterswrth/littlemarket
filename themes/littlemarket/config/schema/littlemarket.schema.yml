@@ -1,0 +1,5 @@
+# Schema for the configuration files of the bluewave theme.
+
+littlemarket.settings:
+  type: theme_settings
+  label: 'Little Market settings'

@@ -1,0 +1,38 @@
+<?php
+
+use Drupal\littlemarket\Theme;
+
+function littlemarket_preprocess_html(array &$vars) {
+
+}
+
+function littlemarket_preprocess_page(array &$vars) {
+  Theme::getSiteWrapClasses($vars);
+}
+
+function littlemarket_preprocess_node(array &$vars) {
+
+}
+
+function littlemarket_preprocess_region(array &$vars) {
+
+}
+
+function littlemarket_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    $content_type = $node->bundle();
+    $suggestions[] = 'page__'.$content_type;
+  }
+}
+
+function littlemarket_theme_suggestions_block_alter(array &$suggestions, array $vars) {
+  Theme::getThemeSuggestionsForBlocks($suggestions, $vars);
+}
+
+function littlemarket_theme_suggestions_paragraph_alter(array &$suggestions, array $vars) {
+  Theme::getThemeSuggestionsForParagraphs($suggestions, $vars);
+}
+
+function littlemarket_preprocess_container(array &$vars) {
+
+}
