@@ -1,0 +1,11 @@
+{% extends 'paragraph.html.twig' %}
+{% block content %}
+    <a href="{{ content.field_link.uri }}">
+      <div class="img">
+        {{ content.field_image }}
+        <span class="title">
+            {{ content.field_title.0 }}
+        </span>
+      </div>
+    </a>
+{% endblock %}

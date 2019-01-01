@@ -181,7 +181,7 @@ body h2 {
   color: #324477;
   font-family: "Merriweather", serif;
   font-size: 35px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 48px;
   margin: 0 0 20px 0;
   letter-spacing: 1px;
@@ -196,7 +196,7 @@ body h3 {
   color: #212121;
   font-family: "Source Sans", sans-serif;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 500;
   margin: 30px 0 18px 0;
 }
 @media (max-width: 767px) {
@@ -927,6 +927,63 @@ div[id*="local-tasks"] ul li a {
   background: #2e8540;
 }
 
+.menu-cta {
+  overflow: hidden;
+}
+.menu-cta .row {
+  margin: 0 -2px;
+}
+.menu-cta .img {
+  border: 2px solid #fff;
+  border-top-width: 4px;
+  border-bottom-width: 4px;
+  position: relative;
+}
+.menu-cta .img::before {
+  background: #000;
+  content: "";
+  height: 100%;
+  left: 0;
+  opacity: .4;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+.menu-cta .img:hover img {
+  -webkit-filter: grayscale(0%);
+  /* Safari 6.0 - 9.0 */
+  filter: grayscale(0%);
+}
+.menu-cta .img img {
+  -webkit-filter: grayscale(100%);
+  /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+  -webkit-transition: filter 0.3s linear;
+  -moz-transition: filter 0.3s linear;
+  -ms-transition: filter 0.3s linear;
+  -o-transition: filter 0.3s linear;
+  transition: filter 0.3s linear;
+}
+.menu-cta .img .title {
+  color: #fff;
+  font-family: "Source Sans", sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  position: absolute;
+  top: 50%;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+  z-index: 2;
+  -moz-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  -webkit-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+}
+
 .pager {
   text-align: left;
   margin: 30px 15px;
@@ -1136,7 +1193,7 @@ div[id*="local-tasks"] ul li a {
   background: #212121;
   padding: 20px 0;
 }
-.footer h3 {
+.footer h4 {
   color: #fff;
   text-transform: uppercase;
 }
@@ -1190,8 +1247,38 @@ body section.main + .feature {
 body section.main + .footer {
   margin-top: 20px;
 }
+body section.bottom {
+  background: #324477;
+  padding: 60px 0;
+  text-align: center;
+}
+body section.bottom h2 {
+  color: #fff;
+}
+body section.bottom p {
+  color: #fff;
+}
 
-/*XL Grid*/
+@media (min-width: 1600px) {
+  .col-xl-25 {
+    width: 20%;
+  }
+}
+@media (min-width: 1200px) {
+  .col-lg-25 {
+    width: 20%;
+  }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .col-md-25 {
+    width: 20%;
+  }
+}
+@media (min-width: 768px) {
+  .col-sm-25 {
+    width: 20%;
+  }
+}
 @media (min-width: 1600px) {
   .col-xl-12 {
     width: 100%;

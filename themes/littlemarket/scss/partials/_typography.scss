@@ -141,7 +141,7 @@ body {
         color:$blue;
         font-family: $font-mw;
         font-size:35px;
-        font-weight:700;
+        font-weight:600;
         line-height: 48px;
         margin:0 0 20px 0;
         letter-spacing:1px;
@@ -154,7 +154,7 @@ body {
         color:$dk-gray;
         font-family:$font-ss;
         font-size: 24px;
-        font-weight: 700;
+        font-weight: 500;
         margin:30px 0 18px 0;
         @include breakpoint(xs) {
             font-size: 20px;

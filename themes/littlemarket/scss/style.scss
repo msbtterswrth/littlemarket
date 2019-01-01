@@ -13,7 +13,29 @@
 @import 'partials/home';
 @import 'partials/content';
 
-/*XL Grid*/
+//Custom 5 Col Grid
+@include breakpoint(xl) {
+    .col-xl-25 {
+        width: 20%;
+    }
+}
+@include breakpoint(lg) {
+    .col-lg-25 {
+        width: 20%;
+    }
+}
+@include breakpoint(md) {
+    .col-md-25 {
+        width: 20%;
+    }
+}
+@include breakpoint(smmin) {
+    .col-sm-25 {
+        width: 20%;
+    }
+}
+
+//XL Grid
 @include breakpoint(xl) {
     .col-xl-12 {
         width: 100%;
