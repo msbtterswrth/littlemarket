@@ -136,6 +136,32 @@ div[id*="local-tasks"] {
         }
     }
 }
+//HERO
+.hero {
+    height:80vh;
+    min-height: 600px;
+    position: relative;
+    &::before {
+        background:#000;
+        content: "";
+        left: 0;
+        height: 100%;
+        opacity: .2;
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+    .blurb {
+        position: absolute;
+        top: 50%;
+        text-align: center;
+        width: 100%;
+        @include translate(0,-50%);
+        h1 {
+            color: #fff;
+        }
+    }
+}
 
 //MENU CTA
 .menu-cta {
@@ -183,6 +209,9 @@ div[id*="local-tasks"] {
             width: 100%;
             z-index: 2;
             @include translate(0,-50%);
+            @include breakpoint(sm){
+                font-size:18px;
+            }
         }
     }
 }

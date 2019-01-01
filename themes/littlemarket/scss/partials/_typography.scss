@@ -127,11 +127,12 @@ body {
         }
     }
     h1 {
-        font-family: $font-mw;
-        font-size:45px;
-        font-weight:700;
         color:$blue;
+        font-family: $font-mw;
+        font-size:42px;
+        font-weight:600;
         line-height: 75px;
+        margin-bottom: 30px;
         @include breakpoint(xs) {
             font-size: 40px;
             line-height: 55px;

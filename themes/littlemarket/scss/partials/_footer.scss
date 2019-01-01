@@ -1,5 +1,6 @@
 .footer {
-    background:$dk-gray;
+    background:url("/themes/littlemarket/img/footer-bg.jpg") no-repeat $dk-gray;
+    background-size:cover;
     padding:20px 0;
     h4 {
         color: #fff;

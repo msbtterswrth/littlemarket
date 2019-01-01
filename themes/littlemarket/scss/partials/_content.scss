@@ -5,13 +5,7 @@ body {
             position:relative;
             height: 100%;
         }
-        &.banner {
-            margin-bottom:30px;
-        }
         &.main {
-            + .feature {
-                margin-top:40px;
-            }
             + .footer {
                 margin-top:20px;
             }
