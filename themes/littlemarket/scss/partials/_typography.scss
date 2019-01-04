@@ -95,7 +95,7 @@ body {
     text-rendering: optimizeLegibility;
     font-size:16px;
     font-family:$font-ss;
-    color:$gray;    
+    color:$dk-gray;    
     img {
         max-width:100%;
         height:auto;
@@ -139,10 +139,9 @@ body {
         }
     }
     h2 {
-        color:$blue;
         font-family: $font-mw;
         font-size:35px;
-        font-weight:600;
+        font-weight:500;
         line-height: 48px;
         margin:0 0 20px 0;
         letter-spacing:1px;

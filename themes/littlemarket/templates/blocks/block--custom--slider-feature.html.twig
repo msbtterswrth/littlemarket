@@ -27,26 +27,16 @@
  * @ingroup themeable
  */
 #}
-<div{{ attributes.addClass('hero') }}>
+<div{{ attributes }}>
   {{ title_prefix }}
   {{ title_suffix }}
   {% block content %}
-    <div class="img">
-        {{ content.field_image }}
-    </div>
-    <div class="text">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-md-7">
-                    <div class="blurb">
-                        {{ content.body }}
-                        {% if content.field_link.0 is not empty %}
-                            <a href="{{ content.field_link[0]['#url'] }}" class="btn blue">{{ content.field_link[0]['#title'] }}</a>
-                        {% endif %}
-                    </div> 
-                </div>
+    <div class="slick">
+      {% for key, cta in content.field_ctas if key|first != '#' %}
+            <div class="slide">
+              {{ cta }}
             </div>
-        </div>
+      {% endfor %}
     </div>
   {% endblock %}
 </div>

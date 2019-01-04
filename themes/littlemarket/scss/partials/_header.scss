@@ -7,10 +7,36 @@
         width: 100%;
         z-index: 9;
     }
+    .menu-toggle {
+        display: none;
+        float:right;
+        color: #fff;
+        font-size: 40px;
+        @include breakpoint(xs){
+            display: block;
+        }
+    }
     nav {
         margin-top: 80px;
+        @include breakpoint(xs){
+            margin: 0;
+        }
         ul {
             text-align: right;
+            @include transition(right .3s $cubic);
+            @include breakpoint(xs){
+                background:url("/themes/littlemarket/img/footer-bg.jpg") no-repeat $dk-gray;
+                background-size:cover;
+                height: 100vh;
+                padding: 20px;
+                position: fixed;
+                right: -100vw;
+                top: 0;
+                width: 60vw;
+                .menu-open &{
+                    right:-60vw;
+                }
+            }
             li {
                 display: inline-block;
                 margin-left: 20px;
@@ -27,6 +53,20 @@
                     }
                 }
             }
+        }
+    }
+}
+
+body {
+    @include breakpoint(xs){
+        overflow-x: hidden;
+        @include translate(0,0);
+        @include transition(transform .3s $cubic);
+    }
+    &.menu-open {
+        @include breakpoint(xs){
+            @include translate(-60vw,0);
+            overflow: hidden;
         }
     }
 }

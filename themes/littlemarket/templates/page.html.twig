@@ -103,19 +103,19 @@
         </section>
     {% endif %} 
 </section>
-{% if page.bottom %}
-    <section class="bottom" role="complimentary" aria-label="Bottom Content">
-        <div class="container">
-            {{ page.bottom }}
-        </div>
-    </section>
-{% endif %} 
 {% if page.feature %}
     <section class="feature" role="complimentary" aria-label="Featured Bottom Content">
         <div class="container-fluid">
             <div class="row">
                 {{ page.feature }}
             </div>
+        </div>
+    </section>
+{% endif %} 
+{% if page.bottom %}
+    <section class="bottom" role="complimentary" aria-label="Bottom Content">
+        <div class="container">
+            {{ page.bottom }}
         </div>
     </section>
 {% endif %} 

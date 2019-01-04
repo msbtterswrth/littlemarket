@@ -2,6 +2,9 @@
     background:url("/themes/littlemarket/img/footer-bg.jpg") no-repeat $dk-gray;
     background-size:cover;
     padding:20px 0;
+    @include breakpoint(xs){
+        text-align: center;
+    }
     h4 {
         color: #fff;
         text-transform: uppercase;

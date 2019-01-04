@@ -1,47 +1,28 @@
 .slick {
     .slick-arrow {
+        background:$teal;
+        color: #fff;
+        font-size: 50px;
         position:absolute;
-        background:rgba(#fff,.4);
         height:70px;
-        width:40px;
+        line-height: 80px;
+        top: 50%;
+        text-align: center;
+        width:70px;
         z-index:9;
+        @include translate(0,-50%);
         @include transition(background .3s linear, color .3s linear);
-        @include breakpoint(md) {
-            width:30px;
-        }
 		@include breakpoint(xs) {
             width:30px;
         }
-        &::before {
-            font-family: 'icomoon' !important;
-            color:#fff;
-            font-size:30px;
-            opacity:1;
-            @include breakpoint(md) {
-                font-size:20px;
-            }
-			@include breakpoint(xs) {
-                font-size:20px;
-            }
+        &.prev-slide {
+            left: -30px;
         }
-        &.slick-prev {
-            left:0;
-            &::before {
-                content: "\e900";
-            }
-        }
-        &.slick-next {
-            right:0;
-            &::before {
-                content: "\e901";
-            }
+        &.next-slide {
+            right: -30px;
         }
         &:hover {
-            background:rgba(#fff,.8);
-            color:$gray;
-            &::before {
-                opacity:1;
-            }
+            background:darken($teal,10%);
         }
     }
     .slick-slide  {

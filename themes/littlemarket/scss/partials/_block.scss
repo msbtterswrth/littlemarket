@@ -152,6 +152,7 @@ div[id*="local-tasks"] {
         width: 100%;
     }
     .blurb {
+        left: 0;
         position: absolute;
         top: 50%;
         text-align: center;
@@ -211,6 +212,34 @@ div[id*="local-tasks"] {
             @include translate(0,-50%);
             @include breakpoint(sm){
                 font-size:18px;
+            }
+        }
+    }
+}
+//IMAGE SLIDER
+.slick {
+    margin-bottom: -1px;    
+    .slide {
+        overflow: hidden;
+        padding: 100px 0;
+        position: relative;
+        .img {        
+            left: 0;
+            position: absolute;
+            top:50%;
+            @include translate(0,-50%);
+        }
+        .blurb {
+            background:#fff;
+            padding: 60px 80px;
+            position: relative;
+            width: 60%;
+            h2 {
+                margin-top: 0;
+            }
+            p {
+                font-size: 18px;
+                line-height: 28px;
             }
         }
     }

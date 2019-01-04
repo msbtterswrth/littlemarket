@@ -28,13 +28,21 @@
         $(".selectpicker", context).selectpicker({});
     }
     function initSlick(context) {
+        $('.slick').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            arrows: true,
+            fade: true,
+            adaptiveHeight:true,
+            prevArrow: $('.prev-slide'),
+            nextArrow: $('.next-slide')
+        });
         $('.single').slick({
             slidesToShow: 1,
             slidesToScroll: 1,
             arrows: true,
             fade: true,
             asNavFor: '.thumbs',
-            //adaptiveHeight:true
         });
         $('.thumbs').slick({
             slidesToShow: 5,
@@ -96,13 +104,13 @@
             initSlick(context);
             $(".search-toggle").click(function() {
                 $("body").toggleClass("search-open");
-                $("body").removeClass("nav-open");
+                $("body").removeClass("menu-open");
             });
             $(".filter-toggle").click(function() {
                 $("body").toggleClass("filter-open");
             });
-            $(".nav-toggle").click(function() {
-                $("body").toggleClass("nav-open");
+            $(".menu-toggle").click(function() {
+                $("body").toggleClass("menu-open");
                 $("body").removeClass("search-open");
             });
         }
