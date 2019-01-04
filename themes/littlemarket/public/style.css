@@ -924,10 +924,14 @@ div[id*="local-tasks"] ul li a {
   content: "";
   left: 0;
   height: 100%;
-  opacity: .2;
+  opacity: .4;
   position: absolute;
   top: 0;
   width: 100%;
+}
+.hero .logo {
+  max-width: 200px;
+  margin-bottom: 20px;
 }
 .hero .blurb {
   left: 0;
@@ -1170,7 +1174,7 @@ div[id*="local-tasks"] ul li a {
 .footer {
   background: url("/themes/littlemarket/img/footer-bg.jpg") no-repeat #212121;
   background-size: cover;
-  padding: 20px 0;
+  padding: 40px 0 80px 0;
 }
 @media (max-width: 767px) {
   .footer {
@@ -1213,6 +1217,17 @@ div[id*="local-tasks"] ul li a {
 .footer i.icon-twitter:hover, .footer i.icon-twitter:focus {
   color: #1da1f2;
   border-color: #1da1f2;
+}
+.footer .logo {
+  float: left;
+  margin-right: 40px;
+  max-width: 160px;
+}
+@media (max-width: 767px) {
+  .footer .logo {
+    float: none;
+    margin: 0 0 25px 0;
+  }
 }
 
 body section {

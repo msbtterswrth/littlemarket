@@ -146,10 +146,14 @@ div[id*="local-tasks"] {
         content: "";
         left: 0;
         height: 100%;
-        opacity: .2;
+        opacity: .4;
         position: absolute;
         top: 0;
         width: 100%;
+    }
+    .logo {
+        max-width: 200px;
+        margin-bottom: 20px;
     }
     .blurb {
         left: 0;
