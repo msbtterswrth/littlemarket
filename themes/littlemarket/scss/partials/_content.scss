@@ -7,7 +7,46 @@ body {
         }
         &.main {
             + .footer {
-                margin-top:20px;
+                margin-top:80px;
+            }
+            .sidebar {
+                .nav {
+                    ul {
+                        .level-1 {
+                            display: none;
+                            &.active-trail {
+                                display: block;
+                                > a {
+                                    font-size: 21px;
+                                    font-weight: 600;
+                                    margin-bottom: 10px;
+                                    text-transform: uppercase;
+                                }
+                                a {
+                                    display: block;
+                                    padding: 0 30px;
+                                    position: relative;
+                                    text-decoration: none;
+                                    &.is-active {
+                                        &::before {
+                                            background:$teal;
+                                            content: "";
+                                            height: 5px;
+                                            left: 0;
+                                            position: absolute;
+                                            top: 50%;
+                                            width: 30px;
+                                            @include translate(-50%,-50%);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .menu-toggle {
+                        display: none;
+                    }
+                }
             }
         }
         &.bottom {

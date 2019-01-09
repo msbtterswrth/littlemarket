@@ -3,7 +3,7 @@
     label {
         font-weight: 400;
         font-size:14px;
-        font-family: $font-mw;
+        font-family: $serif;
     }
     input {
         border-radius:0;
@@ -14,7 +14,7 @@
         line-height:32px;
         padding:5px 10px;
         font-size:20px;
-        font-family:$font-ss;
+        font-family:$sans;
         font-weight:400;
         width:100%;
         color:$gray;
@@ -60,7 +60,7 @@ fieldset {
         color: #fff;
         font-weight: 400;
         font-size:16px;
-        font-family: $font-mw;
+        font-family: $serif;
     }
 }
 .captcha {
@@ -91,7 +91,7 @@ fieldset {
         text-shadow:none;
         outline:none;
         font-size: 20px;
-        font-family:$font-ss;
+        font-family:$sans;
         font-weight:400;
         overflow:hidden;
         padding:10px 40px 10px 15px;

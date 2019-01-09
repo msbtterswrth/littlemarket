@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Merriweather:400,400i,700|Source+Sans+Pro:400,400i,700');
-
+@import url('https://fonts.googleapis.com/css?family=Esteban|Montserrat:400,500,600,700');
 //ICONS
 @font-face {
   font-family: 'icomoon';
@@ -94,7 +93,7 @@
 body {    
     text-rendering: optimizeLegibility;
     font-size:16px;
-    font-family:$font-ss;
+    font-family:$sans;
     color:$dk-gray;    
     img {
         max-width:100%;
@@ -128,10 +127,10 @@ body {
     }
     h1 {
         color:$blue;
-        font-family: $font-mw;
+        font-family: $serif;
         font-size:42px;
         font-weight:600;
-        line-height: 75px;
+        line-height: 56px;
         margin-bottom: 30px;
         @include breakpoint(xs) {
             font-size: 40px;
@@ -139,7 +138,7 @@ body {
         }
     }
     h2 {
-        font-family: $font-mw;
+        font-family: $serif;
         font-size:35px;
         font-weight:500;
         line-height: 48px;
@@ -152,7 +151,7 @@ body {
     }
     h3 {
         color:$dk-gray;
-        font-family:$font-ss;
+        font-family:$sans;
         font-size: 24px;
         font-weight: 500;
         margin:30px 0 18px 0;
@@ -171,7 +170,7 @@ body {
         &.lead {
             text-transform:none;
             font-weight:200;
-            font-family:$font-ss;
+            font-family:$sans;
             font-size:35px;
             line-height:40px;
             margin:0 0 30px 0;
@@ -190,7 +189,7 @@ body {
             float:none!important;
         }
         p {
-            font-family:$font-mw, serif;
+            font-family:$serif, serif;
             color:$dk-gray;
             font-style:italic;
             font-size:21px;
@@ -201,7 +200,7 @@ body {
             color:$gray;
             font-style:normal;
             font-weight:400;
-            font-family:$font-ss;
+            font-family:$sans;
         }
     }
     figure {
@@ -212,7 +211,7 @@ body {
             margin:10px 0 10px 20px;
         }
         figcaption {
-            font-family:$font-ss;
+            font-family:$sans;
             color:$gray;
             margin-top:10px;
             display:block;
@@ -225,7 +224,7 @@ body {
             th {
                 border:none;
                 background:$blue; 
-                font-family:$font-ss;
+                font-family:$sans;
                 color:#fff;
                 padding:15px 30px;
                 font-weight:700;

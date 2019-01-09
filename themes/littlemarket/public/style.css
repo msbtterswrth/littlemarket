@@ -1,6 +1,6 @@
 /*COLORS*/
 /*FONTS*/
-@import url("https://fonts.googleapis.com/css?family=Merriweather:400,400i,700|Source+Sans+Pro:400,400i,700");
+@import url("https://fonts.googleapis.com/css?family=Esteban|Montserrat:400,500,600,700");
 .flush {
   margin: 0 !important;
 }
@@ -18,6 +18,8 @@
 }
 
 .toolbar-fixed {
+  margin-top: 80px;
+  padding-top: 0 !important;
   position: relative;
 }
 
@@ -129,7 +131,7 @@
 body {
   text-rendering: optimizeLegibility;
   font-size: 16px;
-  font-family: "Source Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #212121;
 }
 body img {
@@ -170,10 +172,10 @@ body img.img-left {
 }
 body h1 {
   color: #324477;
-  font-family: "Merriweather", serif;
+  font-family: "Esteban", serif;
   font-size: 42px;
   font-weight: 600;
-  line-height: 75px;
+  line-height: 56px;
   margin-bottom: 30px;
 }
 @media (max-width: 767px) {
@@ -183,7 +185,7 @@ body h1 {
   }
 }
 body h2 {
-  font-family: "Merriweather", serif;
+  font-family: "Esteban", serif;
   font-size: 35px;
   font-weight: 500;
   line-height: 48px;
@@ -198,7 +200,7 @@ body h2 {
 }
 body h3 {
   color: #212121;
-  font-family: "Source Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 24px;
   font-weight: 500;
   margin: 30px 0 18px 0;
@@ -220,7 +222,7 @@ body p {
 body p.lead {
   text-transform: none;
   font-weight: 200;
-  font-family: "Source Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 35px;
   line-height: 40px;
   margin: 0 0 30px 0;
@@ -243,7 +245,7 @@ body blockquote.pull-right {
   float: none !important;
 }
 body blockquote p {
-  font-family: "Merriweather", serif, serif;
+  font-family: "Esteban", serif, serif;
   color: #212121;
   font-style: italic;
   font-size: 21px;
@@ -254,7 +256,7 @@ body blockquote strong {
   color: #afb0b5;
   font-style: normal;
   font-weight: 400;
-  font-family: "Source Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 body figure.align-left {
   margin: 10px 20px 10px 0;
@@ -263,7 +265,7 @@ body figure.align-right {
   margin: 10px 0 10px 20px;
 }
 body figure figcaption {
-  font-family: "Source Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #afb0b5;
   margin-top: 10px;
   display: block;
@@ -275,7 +277,7 @@ body table {
 body table tr th {
   border: none;
   background: #324477;
-  font-family: "Source Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   color: #fff;
   padding: 15px 30px;
   font-weight: 700;
@@ -337,7 +339,7 @@ body table tr:nth-of-type(2n) td {
 .input-group label, .form-item label {
   font-weight: 400;
   font-size: 14px;
-  font-family: "Merriweather", serif;
+  font-family: "Esteban", serif;
 }
 .input-group input, .form-item input {
   border-radius: 0;
@@ -348,7 +350,7 @@ body table tr:nth-of-type(2n) td {
   line-height: 32px;
   padding: 5px 10px;
   font-size: 20px;
-  font-family: "Source Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 400;
   width: 100%;
   color: #afb0b5;
@@ -419,7 +421,7 @@ fieldset legend {
   color: #fff;
   font-weight: 400;
   font-size: 16px;
-  font-family: "Merriweather", serif;
+  font-family: "Esteban", serif;
 }
 
 .captcha {
@@ -449,7 +451,7 @@ fieldset legend {
   text-shadow: none;
   outline: none;
   font-size: 20px;
-  font-family: "Source Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-weight: 400;
   overflow: hidden;
   padding: 10px 40px 10px 15px;
@@ -766,12 +768,23 @@ fieldset legend {
   }
 }
 
-div[class*="box"]:not([class*="checkbox"]) {
+div[class*="box"]:not([class*="checkbox"]), nav[class*="box"]:not([class*="checkbox"]) {
   padding: 50px 30px;
   height: 100%;
 }
-div[class*="box"].center {
+div[class*="box"].center, nav[class*="box"].center {
   text-align: center;
+}
+div[class*="box"].box1, nav[class*="box"].box1 {
+  background: #212121;
+  padding: 20px 0;
+  margin-bottom: 20px;
+}
+div[class*="box"].box1 a, nav[class*="box"].box1 a {
+  color: #fff;
+}
+div[class*="box"].box1 a:hover, div[class*="box"].box1 a:focus, nav[class*="box"].box1 a:hover, nav[class*="box"].box1 a:focus {
+  color: #9a1385;
 }
 
 .breadcrumb {
@@ -787,10 +800,10 @@ div[class*="box"].center {
   text-transform: uppercase;
 }
 .breadcrumb a:hover {
-  color: #324477;
+  color: #9a1385;
 }
 .breadcrumb span {
-  color: #e21e3e;
+  color: #9a1385;
   letter-spacing: 1px;
   text-transform: uppercase;
   position: relative;
@@ -798,7 +811,7 @@ div[class*="box"].center {
 .breadcrumb span::before {
   content: "";
   height: 3px;
-  background: #e21e3e;
+  background: #9a1385;
   width: 100%;
   bottom: calc(100% + 9px);
   left: 0;
@@ -948,6 +961,21 @@ div[id*="local-tasks"] ul li a {
 .hero .blurb h1 {
   color: #fff;
 }
+.hero.alt {
+  height: 40vh;
+  min-height: 500px;
+}
+.hero.alt .blurb h1 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.hero.alt .blurb p {
+  color: #fff;
+  font-size: 21px;
+}
 
 .menu-cta {
   overflow: hidden;
@@ -989,7 +1017,7 @@ div[id*="local-tasks"] ul li a {
 }
 .menu-cta .img .title {
   color: #fff;
-  font-family: "Source Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 28px;
   font-weight: 600;
   letter-spacing: 1px;
@@ -1074,8 +1102,6 @@ div[id*="local-tasks"] ul li a {
 
 .header {
   padding: 20px 0;
-}
-.home-wrap .header {
   left: 0;
   position: absolute;
   top: 0;
@@ -1094,7 +1120,7 @@ div[id*="local-tasks"] ul li a {
   }
 }
 .header nav {
-  margin-top: 80px;
+  margin-top: 20px;
 }
 @media (max-width: 767px) {
   .header nav {
@@ -1126,12 +1152,13 @@ div[id*="local-tasks"] ul li a {
 }
 .header nav ul li {
   display: inline-block;
-  margin-left: 20px;
+  margin-left: 30px;
 }
 .header nav ul li a {
   color: #fff;
   display: block;
-  font-size: 21px;
+  font-size: 18px;
+  font-weight: 500;
   letter-spacing: 1px;
   text-decoration: none;
   text-transform: uppercase;
@@ -1238,7 +1265,42 @@ body section .container {
   height: 100%;
 }
 body section.main + .footer {
-  margin-top: 20px;
+  margin-top: 80px;
+}
+body section.main .sidebar .nav ul .level-1 {
+  display: none;
+}
+body section.main .sidebar .nav ul .level-1.active-trail {
+  display: block;
+}
+body section.main .sidebar .nav ul .level-1.active-trail > a {
+  font-size: 21px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+body section.main .sidebar .nav ul .level-1.active-trail a {
+  display: block;
+  padding: 0 30px;
+  position: relative;
+  text-decoration: none;
+}
+body section.main .sidebar .nav ul .level-1.active-trail a.is-active::before {
+  background: #216d7d;
+  content: "";
+  height: 5px;
+  left: 0;
+  position: absolute;
+  top: 50%;
+  width: 30px;
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+body section.main .sidebar .nav .menu-toggle {
+  display: none;
 }
 body section.bottom {
   background: #324477;

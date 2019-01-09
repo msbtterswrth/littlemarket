@@ -1,10 +1,21 @@
-div[class*="box"] {
+div[class*="box"], nav[class*="box"] {
     &:not([class*="checkbox"]) {
         padding:50px 30px;
         height:100%;        
     }
     &.center {
         text-align:center;
+    }
+    &.box1 {
+        background: $dk-gray;
+        padding: 20px 0;
+        margin-bottom: 20px;
+        a {
+            color: #fff;
+            &:hover, &:focus {
+                color: $purple;
+            }
+        }
     }
 }
 .breadcrumb {
@@ -18,18 +29,18 @@ div[class*="box"] {
         text-decoration: none;
         text-transform:uppercase;
         &:hover {
-            color:$blue;
+            color:$purple;
         }
     }
     span {
-        color:$red;
+        color:$purple;
         letter-spacing:1px;
         text-transform:uppercase;
         position: relative;
         &::before {
             content: "";
             height: 3px;
-            background: $red;
+            background: $purple;
             width: 100%;
             bottom: calc(100% + 9px);
             left: 0;
@@ -166,6 +177,23 @@ div[id*="local-tasks"] {
             color: #fff;
         }
     }
+    &.alt {
+        height:40vh;
+        min-height: 500px;
+        .blurb {
+            h1 {
+                font-family: $sans;
+                font-weight: 600;
+                letter-spacing: 1px;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+            }
+            p {
+                color:#fff;
+                font-size: 21px;
+            }
+        }
+    }
 }
 
 //MENU CTA
@@ -203,7 +231,7 @@ div[id*="local-tasks"] {
         }
         .title {
             color: #fff;
-            font-family: $font-ss;
+            font-family: $sans;
             font-size: 28px;
             font-weight: 600;
             letter-spacing: 1px;
