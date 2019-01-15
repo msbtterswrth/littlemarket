@@ -2,11 +2,11 @@
 //ICONS
 @font-face {
   font-family: 'icomoon';
-  src:  url('/themes/littlemarket/fonts/icomoon.eot?eptqsu');
-  src:  url('/themes/littlemarket/fonts/icomoon.eot?eptqsu#iefix') format('embedded-opentype'),
-    url('/themes/littlemarket/fonts/icomoon.ttf?eptqsu') format('truetype'),
-    url('/themes/littlemarket/fonts/icomoon.woff?eptqsu') format('woff'),
-    url('/themes/littlemarket/fonts/icomoon.svg?eptqsu#icomoon') format('svg');
+  src:  url('/themes/littlemarket/fonts/icomoon.eot?5h92x0');
+  src:  url('/themes/littlemarket/fonts/icomoon.eot?5h92x0#iefix') format('embedded-opentype'),
+    url('/themes/littlemarket/fonts/icomoon.ttf?5h92x0') format('truetype'),
+    url('/themes/littlemarket/fonts/icomoon.woff?5h92x0') format('woff'),
+    url('/themes/littlemarket/fonts/icomoon.svg?5h92x0#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,6 +24,9 @@
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.icon-angle-down:before {
+  content: "\f107";
 }
 .icon-right-arrow:before {
   content: "\e317";
@@ -162,6 +165,10 @@ body {
     h4 {
         font-size:20px;
         margin:30px 0 18px 0;
+    }
+    h5 {
+        font-size: 18px;
+        margin:0 0 15px 0;
     }
     p {
         font-size:16px;

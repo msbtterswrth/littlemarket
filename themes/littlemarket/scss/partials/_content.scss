@@ -60,5 +60,91 @@ body {
                 color:#fff;
             }
         }
-    }   
+    } 
+    //MENU PAGE
+    .icon-vegan {
+        display: inline-block;
+        margin-right: 5px;
+        vertical-align: -20px;
+        &::before {
+            border: 2px solid;
+            border-radius: 100%;
+            color: $gray;
+            content: "V";
+            display: block;
+            font-family: $sans;
+            font-size: 12px;
+            font-weight: 500;
+            height: 25px;
+            line-height: 22px;
+            text-align: center;
+            width: 25px;
+        }
+    }
+    .icon-gf {
+        display: inline-block;
+        margin:0 5px 0 10px;
+        vertical-align: -20px;
+        &::before {
+            border: 2px solid;
+            border-radius: 100%;
+            color: $gray;
+            content: "GF";
+            display: block;
+            font-family: $sans;
+            font-size: 12px;
+            font-weight: 500;
+            height: 25px;
+            line-height: 22px;
+            text-align: center;
+            text-indent: -1px;
+            width: 25px;
+        }
+    }
+    //MENU SECTIONS
+    .menu-section {
+        columns: 3;
+        @include breakpoint(xs){
+            columns:1;
+        }
+        .food-item {
+            display: inline-block;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            h5 {
+                color:$teal;
+                font-weight: 600;
+                margin-bottom: 10px;    
+            }
+            .price {
+                font-size: 18px;
+                font-weight: 600;
+                text-align: right;
+            }
+            .icon-vegan, .icon-gf {
+                float: right;
+                margin-left: 5px;
+                vertical-align: 0;
+                &::before {
+                    color: $md-gray;
+                    font-size: 14px;
+                    height: 30px;
+                    line-height: 26px;
+                    width: 30px;
+                }
+            }
+        }
+    }
+    //LUNCH CTA
+    .lunch-cta {
+        .blurb {
+            background:$lt-gray;
+            padding:35px 40px;
+            ul {
+                li {
+                    margin-bottom: 15px;
+                }
+            }
+        }
+    }
 }

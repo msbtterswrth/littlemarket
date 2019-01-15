@@ -26,25 +26,25 @@
   We call a macro which calls itself to render the full tree.
   @see http://twig.sensiolabs.org/doc/tags/macro.html
 #}
-{{ menus.menu_links(items, attributes, 0) }}
 <div class="menu-toggle"><i class="icon-menu"></i></div>
+{{ menus.menu_links(items, attributes, 0) }}
 {% macro menu_links(items, attributes, menu_level) %}
   {% import _self as menus %}
   {% if items %}
-    {% set level = "level-#{menu_level + 1}" %}
-    {% if item.below %}
-        {% set level = level ~ " parent" %}
-    {% endif %}
     {% if menu_level == 0 %}
-      <ul{{ attributes.addClass('unstyled') }}>
+      <ul{{ attributes.addClass('unstyled') }} tabindex="0">
     {% else %}
       <ul class="unstyled">
     {% endif %}
-    {% for item in items %}
+    {% for item in items %}    
+      {% set level = "level-#{menu_level + 1}" %}
+      {% if item.below %}
+        {% set level = level ~ " parent" %}
+      {% endif %}
       {% if item.in_active_trail %}
-        <li{{ item.attributes.addClass(level, 'active-trail') }}>
+        <li{{ item.attributes.addClass(level, 'active-trail') }} tabindex="{{ loop.index }}">
       {% else %}
-        <li{{ item.attributes.addClass(level) }}>
+        <li{{ item.attributes.addClass(level) }} tabindex="{{ loop.index }}">
       {% endif %}
         {{ link(item.title, item.url) }}
         {% if item.below %}

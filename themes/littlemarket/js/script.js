@@ -113,6 +113,11 @@
                 $("body").toggleClass("menu-open");
                 $("body").removeClass("search-open");
             });
+            $("nav .parent").click(function() {
+                $(this).toggleClass("open");                
+                $(this).siblings().removeClass('open');
+            });
+            
         }
     };
 })(jQuery, Drupal, drupalSettings);

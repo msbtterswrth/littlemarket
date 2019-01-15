@@ -8,11 +8,11 @@
         $('.equal').matchHeight({
             byRow: true,
         });
-        $('.equal-group').each(function(){
-            $(this).find('.equal').matchHeight();
-        });
         $('.equal-row article').matchHeight({
             byRow: false,
+        });
+        $('.equal-group').each(function(){
+            $(this).find('.equal').matchHeight();
         });
         $('.equal-group').each(function(){
             $(this).find('.equal-match').matchHeight({
@@ -113,6 +113,11 @@
                 $("body").toggleClass("menu-open");
                 $("body").removeClass("search-open");
             });
+            $("nav .parent").click(function() {
+                $(this).toggleClass("open");                
+                $(this).siblings().removeClass('open');
+            });
+            
         }
     };
 })(jQuery, Drupal, drupalSettings);

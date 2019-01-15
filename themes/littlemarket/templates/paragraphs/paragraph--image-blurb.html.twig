@@ -1,0 +1,17 @@
+{% extends 'paragraph.html.twig' %}
+{% block content %}
+<div class="lunch-cta">
+    <div class="row">
+        <div class="col-xs-12 col-sm-5 pull-right">
+            <div class="img equal">      
+                {{ content.field_image }}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-7">
+            <div class="blurb equal">
+                {{ content.field_body }}
+            </div>        
+        </div>
+    </div>
+</div>
+{% endblock %}
