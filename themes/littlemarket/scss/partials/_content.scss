@@ -147,4 +147,29 @@ body {
             }
         }
     }
+    //EVENTS
+    .event {
+        &.teaser {
+            position: relative;
+            &::before {
+                opacity:1;
+                @include imgGradient;
+                @include transition(opacity .3s linear);
+            }
+            &:hover, &:focus {
+                &::before {
+                    opacity: .5;
+                }
+            }
+            .blurb {
+                position: absolute;
+                bottom: 0;
+                padding: 20px;
+                left: 0;
+                color: #fff;
+                font-weight: 600;
+                letter-spacing: .5px;
+            }
+        }
+    }        
 }

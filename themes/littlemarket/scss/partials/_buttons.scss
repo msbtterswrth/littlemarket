@@ -34,62 +34,23 @@
     &.blue {
         background:$blue;
         color:#fff;
-        &::after {
-            content: "";
-            background: darken($blue, 25%);
-            position: absolute;
-            height: 3px;
-            width:0;
-            left: 0;
-            bottom: 0;
-            @include transition(width .3s $cubic);
-        }
         &:hover, &:focus {
             background: darken($blue, 10%);
-            &::after {
-                width: 100%;
-            }
         }
         
     }
     &.red {
         background:$red;
         color:#fff;
-        &::after {
-            content: "";
-            background: darken($red, 25%);
-            position: absolute;
-            height: 3px;
-            width:0;
-            left: 0;
-            bottom: 0;
-            @include transition(width .3s $cubic);
-        }
         &:hover, &:focus {
             background: darken($red, 10%);
-            &::after {
-                width: 100%;
-            }
         }
     }
     &.green {
         background:$green;
         color:#fff;
-        &::after {
-            content: "";
-            background: darken($green, 15%);
-            position: absolute;
-            height: 3px;
-            width:0;
-            left: 0;
-            bottom: 0;
-            @include transition(width .3s $cubic);
-        }
         &:hover, &:focus {
             background: darken($green, 10%);
-            &::after {
-                width: 100%;
-            }
         }
     }
     &.black {

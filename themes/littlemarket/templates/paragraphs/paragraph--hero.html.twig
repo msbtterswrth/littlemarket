@@ -1,6 +1,9 @@
 {% extends 'paragraph.html.twig' %}
 {% block content %}
-<div class="hero" style="background:url({{ file_url(paragraph.field_image.entity.uri.value) }}) no-repeat center; background-size:cover;">
+{% if paragraph.field_skinny.value %}
+    {% set class = 'alt' %}
+{% endif %}
+<div class="hero {{ class }}" style="background:url({{ file_url(paragraph.field_image.entity.uri.value) }}) no-repeat center; background-size:cover;">
     <div class="container">
         <div class="blurb">
             {% if paragraph.field_show_logo_.value %}

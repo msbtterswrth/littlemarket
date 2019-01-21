@@ -194,6 +194,13 @@ div[id*="local-tasks"] {
             }
         }
     }
+    &.no-image {        
+        height:300px;
+        min-height: 0;
+        .blurb {
+            top: calc(50% + 20px);
+        }
+    }
 }
 
 //MENU CTA
