@@ -1405,6 +1405,7 @@ body .menu-section .food-item {
   display: inline-block;
   page-break-inside: avoid;
   break-inside: avoid;
+  width: 100%;
 }
 body .menu-section .food-item h5 {
   color: #216d7d;
