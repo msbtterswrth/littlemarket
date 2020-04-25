@@ -69,7 +69,6 @@ header {
             .logo {
                 grid-column-start:2;
                 place-self: start center;
-                position:absolute;
                 width: 250px;
             }
             nav { 
@@ -91,17 +90,28 @@ header {
                             margin-left: 25px;
                         }
                         a {
-                            color: $moss;
+                            color: #fff;
                             font-family: $script;
                             font-size:21px;
                             letter-spacing: 1px;
                             text-transform: uppercase;
                             text-decoration: none;
                             &:hover, &:focus {
-                                color: #fff;
+                                color: $salmon;
                             }
                             &.pink {
                                 color: $raspberry;
+                                @include animation(pink-pulse 3s linear infinite);
+                                @at-root {
+                                    @include keyframes(pink-pulse) {
+                                        from {
+                                            color: $raspberry 
+                                        }
+                                        to {
+                                            color: lighten($raspberry, 5%)
+                                        }
+                                    }
+                                }
                                 &:hover, &:focus {
                                     color: #fff;
                                 }
