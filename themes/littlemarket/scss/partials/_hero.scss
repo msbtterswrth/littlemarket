@@ -5,6 +5,9 @@
         min-height: 600px;
         position: relative;
         margin-bottom: 40px;
+        @include breakpoint(smmax) {
+            height: auto;
+        }
         &::before {
             background:#000;
             content: "";
@@ -19,7 +22,7 @@
             max-width: 200px;
             margin-bottom: 20px;
             @include breakpoint(xs) {
-                max-width: 45vw!important;
+                max-width: 25vw!important;
             }
         }
         .blurb {
@@ -30,9 +33,20 @@
             text-align: center;
             width: 100%;
             @include translate(0,-50%);
+            @include breakpoint(xs) {
+                margin: 160px auto 80px;
+                position: relative;
+                top: 0;
+                @include translate(0,0);                
+            }
             h1 {
                 color: #fff;
                 margin: 20px 0 30px;
+                @include breakpoint(xs) {
+                    font-size: 36px; 
+                    line-height: 42px;
+                    margin-right: 20px 0;
+                }
             }
             p {
                 font-size: 24px;
