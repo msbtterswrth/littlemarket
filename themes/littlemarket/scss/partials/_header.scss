@@ -85,7 +85,7 @@ header {
                 &:last-of-type {            
                     grid-column-start:3;
                 }
-                @include breakpoint(sm-max) {
+                @include breakpoint(smmax) {
                     display: none;
                 }
                 ul {
@@ -134,7 +134,7 @@ header {
             }
             .menu-toggle {
                 display: none;
-                @include breakpoint(sm-max) {
+                @include breakpoint(smmax) {
                     display: block;
                 }
             }
@@ -144,7 +144,7 @@ header {
                 padding: 30px;
                 position: fixed;
                 text-align: center;
-                @include breakpoint(sm-max) {
+                @include breakpoint(smmax) {
                     display: block;
                 }
                 ul {
