@@ -1,3 +1,8 @@
+.toolbar-fixed {
+    header {
+        top:80px;
+    }
+}
 header {    
     left: 0;
     position:fixed;
@@ -62,10 +67,7 @@ header {
             display:grid;
             grid: auto-flow dense / auto 350px auto;
             .logo {
-                background: #333;
-                border-radius: 3px;
                 grid-column-start:2;
-                height: 100px;
                 place-self: start center;
                 position:absolute;
                 width: 250px;
@@ -94,6 +96,16 @@ header {
                             font-size:21px;
                             letter-spacing: 1px;
                             text-transform: uppercase;
+                            text-decoration: none;
+                            &:hover, &:focus {
+                                color: #fff;
+                            }
+                            &.pink {
+                                color: $raspberry;
+                                &:hover, &:focus {
+                                    color: #fff;
+                                }
+                            }
                         }
                     }
                 }
