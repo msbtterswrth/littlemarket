@@ -9,6 +9,13 @@ body {
             + .footer {
                 margin-top:80px;
             }
+            article {
+                .slick {
+                    @include breakpoint(lg) {
+                        max-width:66%;
+                    }
+                }
+            }
             .sidebar {
                 .nav {
                     ul {
@@ -70,7 +77,26 @@ body {
             border: 2px solid;
             border-radius: 100%;
             color: $gray;
-            content: "V";
+            content: "VE";
+            display: block;
+            font-family: $sans;
+            font-size: 12px;
+            font-weight: 500;
+            height: 25px;
+            line-height: 22px;
+            text-align: center;
+            width: 25px;
+        }
+    }
+    .icon-veg {
+        display: inline-block;
+        margin:0 5px 0 10px;
+        vertical-align: -20px;
+        &::before {
+            border: 2px solid;
+            border-radius: 100%;
+            color: $gray;
+            content: "VG";
             display: block;
             font-family: $sans;
             font-size: 12px;
@@ -104,6 +130,8 @@ body {
     //MENU SECTIONS
     .menu-section {
         columns: 3;
+        column-rule: 2px solid $gray;
+        column-gap: 80px;
         @include breakpoint(xs){
             columns:1;
         }
@@ -112,6 +140,11 @@ body {
             page-break-inside: avoid;
             break-inside: avoid;
             width:100%;
+            &.drink {
+                .price {
+                   font-size: 16px; 
+                }
+            }
             h5 {
                 color:$teal;
                 font-weight: 600;
@@ -121,6 +154,13 @@ body {
                 font-size: 18px;
                 font-weight: 600;
                 text-align: right;
+                @include breakpoint(xs) {
+                    margin-bottom: 10px;
+                    text-align: left;
+                }
+                span {
+                    display: block;
+                }
             }
             .icon-vegan, .icon-gf {
                 float: right;
@@ -130,7 +170,7 @@ body {
                     color: $md-gray;
                     font-size: 14px;
                     height: 30px;
-                    line-height: 26px;
+                    line-height: 26px; 
                     width: 30px;
                 }
             }
@@ -152,6 +192,7 @@ body {
     .event {
         &.teaser {
             position: relative;
+            margin-bottom: 30px; 
             &::before {
                 opacity:1;
                 @include imgGradient;

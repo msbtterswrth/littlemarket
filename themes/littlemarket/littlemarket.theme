@@ -36,3 +36,18 @@ function littlemarket_theme_suggestions_paragraph_alter(array &$suggestions, arr
 function littlemarket_preprocess_container(array &$vars) {
 
 }
+function littlemarket_preprocess_image_formatter(&$vars) {
+  /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image */
+  $image = $vars['item'];
+  // ImageItem -> FileFieldItemList -> EntityInterface
+  $entity = $image->getParent()->getParent()->getValue();
+  $image_style = FALSE;
+  if ($entity instanceof \Drupal\paragraphs\Entity\Paragraph) {
+    if ($image_style) {
+      $vars['image'] = array_merge($vars['image'], [
+        '#theme' => 'image_style',
+        '#style_name' => $image_style,
+      ]);
+    }
+  }
+}

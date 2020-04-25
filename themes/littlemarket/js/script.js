@@ -35,7 +35,8 @@
             fade: true,
             adaptiveHeight:true,
             prevArrow: $('.prev-slide'),
-            nextArrow: $('.next-slide')
+            nextArrow: $('.next-slide'),
+            autoplay:true
         });
         $('.single').slick({
             slidesToShow: 1,

@@ -4,6 +4,8 @@ namespace Drupal\littlemarket;
 
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Template\Attribute;
+use Drupal\image\Plugin\Field\FieldType\ImageItem;
+use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
 
@@ -47,6 +49,22 @@ class Theme {
 
   public static function getThemeSuggestionsForParagraphs(array &$suggestions, array $vars) {
 
+  }
+  public static function preprocessImageFormatter(&$vars) {
+    /** @var ImageItem $image */
+    $image = $vars['item'];
+    // ImageItem -> FileFieldItemList -> EntityInterface
+    $entity = $image->getParent()->getParent()->getValue();
+    $image_style = FALSE;
+    
+    if ($entity instanceof \Drupal\paragraphs\Entity\Paragraph) {
+        if ($image_style) {
+          $vars['image'] = array_merge($vars['image'], [
+            '#theme' => 'image_style',
+            '#style_name' => $image_style,
+          ]);
+        }
+    }
   }
 
 }

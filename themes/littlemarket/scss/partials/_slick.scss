@@ -13,13 +13,21 @@
         @include translate(0,-50%);
         @include transition(background .3s linear, color .3s linear);
 		@include breakpoint(xs) {
-            width:30px;
+            margin-top: -35px;
+            top: 0;
+            width:50px;
         }
         &.prev-slide {
             left: -30px;
+            @include breakpoint(xs) {
+                left: -15px;
+            }
         }
         &.next-slide {
             right: -30px;
+            @include breakpoint(xs) {
+                right: -15px;
+            }
         }
         &:hover {
             background:darken($teal,10%);
@@ -28,11 +36,26 @@
     .slick-slide  {
         position:relative;
         img {
-            max-width:100%;
+            width:100%;
             height:auto;
             margin: 0 auto;
-            @include breakpoint(xs) {
-                width:100%;
+        }
+        .caption {
+            border-left: 3px solid $teal;
+            margin-top: 20px;
+            padding-left: 15px;
+            font-size: 18px;
+            line-height: 24px;
+
+        }
+    }
+    .slide-wrap {
+        .slick-arrow {            
+            &.prev-slide {
+                left: 0;
+            }
+            &.next-slide {
+                right: 0;
             }
         }
     }
