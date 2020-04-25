@@ -93,7 +93,7 @@ header {
                             color: #fff;
                             font-family: $script;
                             font-size:21px;
-                            letter-spacing: 1px;
+                            letter-spacing: 1.5px;
                             text-transform: uppercase;
                             text-decoration: none;
                             &:hover, &:focus {
@@ -101,14 +101,14 @@ header {
                             }
                             &.pink {
                                 color: $raspberry;
-                                @include animation(pink-pulse 3s linear infinite);
+                                @include animation(pink-pulse 3s linear infinite alternate);
                                 @at-root {
                                     @include keyframes(pink-pulse) {
                                         from {
                                             color: $raspberry 
                                         }
                                         to {
-                                            color: lighten($raspberry, 5%)
+                                            color: lighten($raspberry, 15%)
                                         }
                                     }
                                 }
