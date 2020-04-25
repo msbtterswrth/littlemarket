@@ -6,7 +6,7 @@
     left:0;
     content:"";
 	pointer-events:none;
-    @include background-image(linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.80) 100%));  
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.8) 100%);  
 }
 
 @mixin underline {
