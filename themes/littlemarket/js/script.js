@@ -21,6 +21,21 @@
         });
       });
     }
+    function initHeaderScroll(context) {
+        var s = $("header");
+        var b = $("body");
+        var pos = s.position();					   
+        $(window).scroll(function() {
+            var windowpos = $(window).scrollTop();
+            if (windowpos >= pos.top & windowpos >50) {
+                b.addClass("up");
+                b.removeClass("down");
+            } else {
+                b.addClass("down");
+                b.removeClass("up");	
+            }
+        });
+    });
     function initExternalLinks(context) {
         $('a[href*="//"]:not([href*="' + document.location.hostname + '"])', context).attr("target", "_blank").addClass("external");
     }
@@ -103,6 +118,7 @@
             initBootstrapSelect(context);
             initSmoothScroll(context);
             initSlick(context);
+            initHeaderScroll(context);
             $(".search-toggle").click(function() {
                 $("body").toggleClass("search-open");
                 $("body").removeClass("menu-open");

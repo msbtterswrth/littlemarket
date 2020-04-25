@@ -1,136 +1,99 @@
-.header {
-    padding: 20px 0;
+header {    
     left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
+    position:fixed;
+    top:0;
+    width:100%;
     z-index: 9;
-    .menu-toggle {
-        display: none;
-        float:right;
-        color: #fff;
-        font-size: 40px;
-        @include breakpoint(xs){
-            display: block;
-        }
-    }
-    nav {
-        margin-top: 20px;
-        @include breakpoint(xs){
-            margin: 0;
-        }
-        ul {
-            text-align: right;
-            @include transition(right .3s $cubic);
-            @include breakpoint(xs){
-                background:url("/themes/littlemarket/img/footer-bg.jpg") no-repeat $dk-gray;
-                background-size:cover;
-                height: 100vh;
-                padding: 20px;
-                position: fixed;
-                right: -100vw;
-                top: 0;
-                width: 60vw;
-                .menu-open &{
-                    right:-60vw;
-                }
-            }
-            li {
-                display: inline-block;
-                margin-left: 30px;
-                @include breakpoint(xs) {
-                    margin-bottom: 20px;
-                }
-                &.parent {
-                    position: relative;                    
-                    &:hover, &:focus, &:active {
-                        > a {
-                            &::after {
-                                @include rotate(180);
-                            }
-                        }
-                        > ul {
-                            opacity: 1;
-                            visibility: visible;
-                            @include breakpoint(xs) {
-                                height: auto;
-                                overflow: visible;
-                            }
-                        }
-                    }
-                    > a {
-                        padding-right: 25px;
-                        &::after {
-                            color: #fff;
-                            content: "\f107";
-                            font-family: icomoon;
-                            font-size: 30px;
-                            line-height: 22px;
-                            position: absolute;
-                            right: 0;
-                            top: 0;
-                            @include transition(color .3s linear);
-                        }
-                        &:hover, &:focus {
-                            &::after {
-                                color: $gold;
-                            }
-                        }
-                    }
-                }
-                &.level-1 {
-                    position: relative;
-                    > ul {
-                        background:rgba($dk-gray,.9);
-                        left:0;
-                        opacity: 0;
-                        padding: 10px;
-                        position: absolute;
-                        text-align: left;
-                        top: 0;
-                        top: 100%;
-                        visibility: hidden;
-                        width: 200px;
-                        @include transition(opacity .3s linear);
-                        @include breakpoint(xs) {
-                            background: none;
-                            height: 0;
-                            overflow: hidden;
-                            padding: 0;
-                            position: relative;
-                            right: 0;
-                            text-align: right;
-                            width: auto;
-                        }
-                        .level-2 {
-                            display: block;
-                            margin:0;
-                            + .level-2 {
-                                margin-top:10px;
-                                @include breakpoint(xs) {
-                                    margin-top: 0;
+    .awning {
+        position: absolute;
+        top: 60px;
+        width:100%;
+        z-index:0;
+        @at-root {
+            body {
+                &.up {
+                    .awning {
+                        span {
+                            height: 7vh;
+                            @for $i from 1 through 25 {
+                                &:nth-child(#{$i}n) {
+                                    transition-delay: #{$i * 0.05}s;
                                 }
                             }
-                            a {
-                                font-size: 16px;
-                                text-transform: none;
+                        }
+                    }
+                }
+                &.down {
+                    .awning {
+                        span {
+                            height: 10vh;                          
+                            @for $i from 1 through 25 {
+                                &:nth-last-child(#{$i}n) {
+                                    transition-delay: #{$i * 0.05}s;
+                                }
                             }
                         }
                     }
                 }
-                a {
-                    color: #fff;
-                    display: block;
-                    font-size: 18px;
-                    font-weight: 500;
-                    letter-spacing: 1px;
-                    text-decoration: none;
-                    text-transform: uppercase;
-                    @include transition(color .3s linear);
-                    &:hover, &:focus, &.is-active {
-                        color:$gold;
-                        &::after {
-                            color: $gold;
+            }
+        }
+        span {
+            background: #fff;
+            border:2px solid #121212;
+            border-radius: 0 0 2vw 2vw;
+            display:block;
+            float:left;
+            height:10vh;
+            max-height: 100px;
+            width: 4%;
+            transition: height .3s linear;
+            &:nth-of-type(even) {
+                background: #121212;
+            }
+        }
+    }
+    .navigation {
+        background: #121212;
+        border-bottom:2px solid #121212;
+        padding:20px 0;
+        position:relative;
+        z-index: 9;
+        .inner {
+            display:grid;
+            grid: auto-flow dense / auto 350px auto;
+            .logo {
+                background: #333;
+                border-radius: 3px;
+                grid-column-start:2;
+                height: 100px;
+                place-self: start center;
+                position:absolute;
+                width: 250px;
+            }
+            nav { 
+                place-self:center;
+                text-align: center;
+                &:first-of-type {            
+                    grid-column-start:1;
+                }
+                &:last-of-type {            
+                    grid-column-start:3;
+                }
+                ul {
+                    list-style-type:none;
+                    margin:0; 
+                    padding:0; 
+                    li {
+                        display:inline-block;
+                        + li {
+                            margin-left: 25px;
+                        }
+                        a {
+                            color: $moss;
+                            font-family: $script;
+                            font-size:21px;
+                            letter-spacing: 1px;
+                            text-transform: uppercase;
                         }
                     }
                 }
@@ -138,7 +101,6 @@
         }
     }
 }
-
 body {
     @include breakpoint(xs){
         overflow-x: hidden;
