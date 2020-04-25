@@ -18,6 +18,7 @@ header {
             body {
                 &.up {
                     .awning {
+                        top: 55px;
                         span {
                             height: 7vh;
                             @for $i from 1 through 25 {
@@ -70,6 +71,10 @@ header {
                 grid-column-start:2;
                 place-self: start center;
                 width: 250px;
+                @include transition(width .3s linear);
+                .up &{
+                    width: 150px;
+                }
             }
             nav { 
                 place-self:center;
@@ -96,25 +101,29 @@ header {
                             letter-spacing: 1.5px;
                             text-transform: uppercase;
                             text-decoration: none;
+                            @include transition(font-size .3s linear);
                             &:hover, &:focus {
                                 color: $salmon;
                             }
                             &.pink {
                                 color: $raspberry;
-                                @include animation(pink-pulse 3s linear infinite alternate);
+                                @include animation(pink-pulse 1s linear infinite alternate);
                                 @at-root {
                                     @include keyframes(pink-pulse) {
                                         from {
                                             color: $raspberry 
                                         }
                                         to {
-                                            color: lighten($raspberry, 15%)
+                                            color: $salmon
                                         }
                                     }
                                 }
                                 &:hover, &:focus {
                                     color: #fff;
                                 }
+                            }
+                            .up &{
+                                font-size: 16px;
                             }
                         }
                     }
