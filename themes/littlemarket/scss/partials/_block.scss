@@ -147,65 +147,6 @@ div[id*="local-tasks"] {
         }
     }
 }
-//HERO
-.hero {
-    height:80vh;
-    min-height: 600px;
-    position: relative;
-    &::before {
-        background:#000;
-        content: "";
-        left: 0;
-        height: 100%;
-        opacity: .4;
-        position: absolute;
-        top: 0;
-        width: 100%;
-    }
-    .logo {
-        max-width: 200px;
-        margin-bottom: 20px;
-        @include breakpoint(xs) {
-            max-width: 45vw!important;
-        }
-    }
-    .blurb {
-        left: 0;
-        position: absolute;
-        top: 50%;
-        text-align: center;
-        width: 100%;
-        @include translate(0,-50%);
-        h1 {
-            color: #fff;
-        }
-    }
-    &.alt {
-        height:40vh;
-        min-height: 500px;
-        .blurb {
-            h1 {
-                font-family: $sans;
-                font-weight: 600;
-                letter-spacing: 1px;
-                margin-bottom: 10px;
-                text-transform: uppercase;
-            }
-            p {
-                color:#fff;
-                font-size: 21px;
-            }
-        }
-    }
-    &.no-image {        
-        height:300px;
-        min-height: 0;
-        .blurb {
-            top: calc(50% + 20px);
-        }
-    }
-}
-
 //MENU CTA
 .menu-cta {
     overflow: hidden;

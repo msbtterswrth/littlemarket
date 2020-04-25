@@ -101,7 +101,7 @@ header {
                             letter-spacing: 1.5px;
                             text-transform: uppercase;
                             text-decoration: none;
-                            @include transition(font-size .3s linear);
+                            @include transition(font-size .3s linear, color .3s linear);
                             &:hover, &:focus {
                                 color: $salmon;
                             }

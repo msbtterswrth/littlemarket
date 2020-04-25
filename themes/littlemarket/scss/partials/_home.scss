@@ -1,0 +1,34 @@
+.intro {
+    h2 {
+        font-family: $script;
+        font-size: 36px;  
+        margin-bottom: 60px;
+        position: relative;
+        text-align:center;
+        &::after {
+            background: $raspberry;
+            content: "";
+            height:3px;
+            left: 50%;
+            position: absolute;
+            top: calc(100% + 25px);
+            transform: translate(-50%,0);
+            width: 300px;
+        }
+    }
+    p {
+        color: #333;
+        font-family: $serif;
+        font-size:18px;
+        &.lead {
+            font-family: $serif;
+            font-size:21px;
+            line-height:28px;
+            &:first-letter {
+                color: $raspberry;
+                font-size:36px;
+                font-weight:600;
+            }
+        }
+    }
+}
