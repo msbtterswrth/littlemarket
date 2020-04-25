@@ -151,7 +151,6 @@ header {
                 grid-column-start: 2;
                 font-size: 40px;
                 text-align: right;
-                width: 70vw;
                 @include breakpoint(smmax) {
                     display: block;
                 }
@@ -159,9 +158,12 @@ header {
             .mobile-menu {
                 background: #000;
                 display: none;
+                height: 100vh;
+                left: 100%;
                 padding: 30px;
                 position: fixed;
-                text-align: center;
+                top: 0;
+                width: 60vw;
                 @include breakpoint(smmax) {
                     display: block;
                 }
@@ -177,6 +179,8 @@ header {
                         a {
                             color: #fff;
                             display: block;
+                            font-size: 21px;
+                            margin-bottom: 10px;
                         }
                     }
                 }
