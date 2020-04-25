@@ -35,7 +35,7 @@
                 b.removeClass("up");	
             }
         });
-    });
+    }
     function initExternalLinks(context) {
         $('a[href*="//"]:not([href*="' + document.location.hostname + '"])', context).attr("target", "_blank").addClass("external");
     }
