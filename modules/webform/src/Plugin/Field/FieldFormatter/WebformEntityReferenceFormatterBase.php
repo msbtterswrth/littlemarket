@@ -2,14 +2,13 @@
 
 namespace Drupal\webform\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceFormatterBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Render\RendererInterface;
 use Drupal\webform\Plugin\Field\FieldType\WebformEntityReferenceItem;
 use Drupal\webform\WebformInterface;
+use Drupal\webform\WebformMessageManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,21 +17,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormatterBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The renderer.
+   * The webform message manager.
    *
-   * @var \Drupal\Core\Render\RendererInterface
+   * @var \Drupal\webform\WebformMessageManagerInterface
    */
-  protected $renderer;
+  protected $messageManager;
 
   /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
-   * WebformEntityReferenceLinkFormatter constructor.
+   * WebformEntityReferenceEntityFormatter constructor.
    *
    * @param string $plugin_id
    *   The plugin_id for the formatter.
@@ -48,16 +40,13 @@ abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormat
    *   The view mode.
    * @param array $third_party_settings
    *   Third party settings.
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The factory for configuration objects.
+   * @param \Drupal\webform\WebformMessageManagerInterface $message_manager
+   *   The webform message manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, RendererInterface $renderer, ConfigFactoryInterface $config_factory) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, WebformMessageManagerInterface $message_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
 
-    $this->configFactory = $config_factory;
-    $this->renderer = $renderer;
+    $this->messageManager = $message_manager;
   }
 
   /**
@@ -72,8 +61,7 @@ abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormat
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('renderer'),
-      $container->get('config.factory')
+      $container->get('webform.message_manager')
     );
   }
 
@@ -112,11 +100,11 @@ abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormat
    */
   protected function setCacheContext(array &$elements, WebformInterface $webform, WebformEntityReferenceItem $item) {
     // Track if webform.settings is updated.
-    $config = $this->configFactory->get('webform.settings');
-    $this->renderer->addCacheableDependency($elements, $config);
+    $config = \Drupal::config('webform.settings');
+    \Drupal::service('renderer')->addCacheableDependency($elements, $config);
 
-    // Track if the webform is updated.
-    $this->renderer->addCacheableDependency($elements, $webform);
+    // Track if the webfor is updated.
+    \Drupal::service('renderer')->addCacheableDependency($elements, $webform);
 
     // Calculate the max-age based on the open/close data/time for the item
     // and webform.
@@ -127,7 +115,7 @@ abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormat
         $item_state = $item->$state;
         if ($item_state && strtotime($item_state) > time()) {
           $item_seconds = strtotime($item_state) - time();
-          if (!$max_age && $item_seconds > $max_age) {
+          if (!$max_age || $item_seconds > $max_age) {
             $max_age = $item_seconds;
           }
         }
@@ -136,7 +124,7 @@ abstract class WebformEntityReferenceFormatterBase extends EntityReferenceFormat
         $webform_state = $webform->get($state);
         if ($webform_state && strtotime($webform_state) > time()) {
           $webform_seconds = strtotime($webform_state) - time();
-          if (!$max_age && $webform_seconds > $max_age) {
+          if (!$max_age || $webform_seconds > $max_age) {
             $max_age = $webform_seconds;
           }
         }

@@ -79,16 +79,12 @@
     sendto: function (File, win) {
       var imce = win.imce;
       var editor = CKEDITOR.instances[imce.getQuery('ck_id')];
-      if (!editor) {
-        win.close();
-        return;
-      }
-      var selection = imce.getSelection();
-      var is_img = imce.getQuery('type') === 'image';
-      var process = function() {
+      if (editor) {
         var i;
         var text;
         var lines = [];
+        var selection = imce.getSelection();
+        var is_img = imce.getQuery('type') === 'image';
         for (i in selection) {
           if (!imce.owns(selection, i)) {
             continue;
@@ -96,7 +92,7 @@
           File = selection[i];
           // Image
           if (is_img && File.isImageSource()) {
-            lines.push('<img src="' + File.getUrl() + '"' + (File.width ? ' width="' + File.width + '"' : '') + (File.height ? ' height="' + File.height + '"' : '') + ' data-entity-type="file" data-entity-uuid="' + (File.uuid || '') + '" alt="" />');
+            lines.push('<img src="' + File.getUrl() + '"' + (File.width ? ' width="' + File.width + '"' : '') + (File.height ? ' height="' + File.height + '"' : '') + ' alt="" />');
           }
           // Link
           else {
@@ -106,15 +102,8 @@
           }
         }
         editor.insertHtml(lines.join('<br />'));
-        win.close();
-      };
-      // Process after loading the uuids.
-      if (is_img) {
-        imce.loadItemUuids(selection, process);
       }
-      else {
-        process();
-      }
+      win.close();
     },
 
     /**
@@ -138,10 +127,10 @@
         var div = editor.document.createElement('div');
         div.append(range.cloneContents());
         html = div.getHtml();
-      } catch (err) { }
+      } catch(err) {}
       return html;
     }
-
+ 
   };
 
 })(jQuery, Drupal, CKEDITOR);

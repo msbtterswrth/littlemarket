@@ -24,9 +24,8 @@ class WebformImageSelectImages extends FormElement {
       '#input' => TRUE,
       '#label' => t('image'),
       '#labels' => t('images'),
-      '#min_items' => 3,
-      '#empty_items' => 1,
-      '#add_more_items' => 1,
+      '#empty_items' => 5,
+      '#add_more' => 1,
       '#process' => [
         [$class, 'processWebformImageSelectImages'],
       ],
@@ -64,7 +63,7 @@ class WebformImageSelectImages extends FormElement {
     // Wrap this $element in a <div> that handle #states.
     WebformElementHelper::fixStatesWrapper($element);
 
-    $properties = ['#label', '#labels', '#min_items', '#empty_items', '#add_more_items'];
+    $properties = ['#label', '#labels', '#empty_items', '#add_more'];
 
     $element['images'] = array_intersect_key($element, array_combine($properties, $properties)) + [
       '#type' => 'webform_multiple',
@@ -78,28 +77,26 @@ class WebformImageSelectImages extends FormElement {
         'value' => [
           '#type' => 'textfield',
           '#title' => t('Image value'),
-          '#title_display' => 'invisible',
-          '#placeholder' => t('Enter value…'),
+          '#title_display' => t('invisible'),
+          '#placeholder' => t('Enter value'),
           '#error_no_message' => TRUE,
-          '#attributes' => ['class' => ['js-webform-options-sync']],
         ],
         'text' => [
           '#type' => 'textfield',
           '#title' => t('Image text'),
-          '#title_display' => 'invisible',
-          '#placeholder' => t('Enter text…'),
+          '#title_display' => t('invisible'),
+          '#placeholder' => t('Enter text'),
           '#error_no_message' => TRUE,
         ],
         'src' => [
           '#type' => 'textfield',
           '#title' => t('Image src'),
-          '#title_display' => 'invisible',
-          '#placeholder' => t('Enter image src…'),
+          '#title_display' => t('invisible'),
+          '#placeholder' => t('Enter image src'),
           '#error_no_message' => TRUE,
         ],
       ],
       '#error_no_message' => TRUE,
-      '#add_more_input_label' => t('more images'),
       '#default_value' => (isset($element['#default_value'])) ? $element['#default_value'] : [],
     ];
 
@@ -118,8 +115,6 @@ class WebformImageSelectImages extends FormElement {
         '#message_storage' => WebformMessage::STORAGE_LOCAL,
       ];
     }
-
-    $element['#attached']['library'][] = 'webform/webform.element.options.admin';
 
     return $element;
   }

@@ -23,19 +23,21 @@ class WebformTermsOfService extends Checkbox {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     $properties = [
       'title' => $this->t('I agree to the {terms of service}.'),
       'terms_type' => 'modal',
       'terms_title' => '',
       'terms_content' => '',
-    ] + parent::defineDefaultProperties();
+    ] + parent::getDefaultProperties();
     unset(
+      $properties['icheck'],
       $properties['field_prefix'],
       $properties['field_suffix'],
       $properties['description'],
       $properties['description_display'],
       $properties['title_display']
+
     );
     return $properties;
   }
@@ -43,11 +45,9 @@ class WebformTermsOfService extends Checkbox {
   /**
    * {@inheritdoc}
    */
-  protected function defineTranslatableProperties() {
-    return array_merge(parent::defineTranslatableProperties(), ['terms_title', 'terms_content']);
+  public function getTranslatableProperties() {
+    return array_merge(parent::getTranslatableProperties(), ['terms_title', 'terms_content']);
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}

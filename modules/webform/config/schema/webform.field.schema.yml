@@ -1,4 +1,3 @@
-# @see field.storage_settings.entity_reference
 field.storage_settings.webform:
   type: mapping
   label: 'Webform field storage settings'
@@ -7,25 +6,22 @@ field.storage_settings.webform:
       type: string
       label: 'Type of item to reference'
 
-# @see field.field_settings.entity_reference
-field.field_settings.webform:
+base_webform_field_field_settings:
   type: mapping
-  label: 'Entity reference field settings'
   mapping:
     handler:
       type: string
       label: 'Reference method'
     handler_settings:
       type: entity_reference_selection.[%parent.handler]
-      label: 'Entity reference selection plugin settings'
+      label: 'Entity reference selection settings'
 
-# @see field.value.entity_reference
-field.value.webform:
-  type: field.value.entity_reference
-  label: 'Default value'
+field.field_settings.webform:
+  type: base_webform_field_field_settings
+  label: 'Webform settings'
   mapping:
     default_data:
-      type: text
+      type: string
       label: 'Default webform submission data'
     status:
       type: string
@@ -36,13 +32,6 @@ field.value.webform:
     close:
       type: string
       label: 'Webform close date/time'
-    # @todo Figure how and if this can be moved to webform_access.schema.yml.
-    webform_access_group:
-      type: sequence
-      label: 'Access groups'
-      sequence:
-        type: string
-        label: 'Access group'
 
 field.widget.settings.webform_entity_reference_autocomplete:
   type: mapping
@@ -56,7 +45,7 @@ field.widget.settings.webform_entity_reference_autocomplete:
       label: 'Size of textfield'
     placeholder:
       type: label
-      label: Placeholder
+      label: 'Placeholder'
     default_data:
       type: boolean
       label: 'Default submission data'
@@ -68,6 +57,7 @@ field.widget.settings.webform_entity_reference_select:
     default_data:
       type: boolean
       label: 'Default submission data'
+
 field.formatter.settings.webform_entity_reference_entity_view:
   type: mapping
   label: 'Display the referenced webform with default submission data.'
@@ -83,9 +73,3 @@ field.formatter.settings.webform_entity_reference_link:
     label:
       type: label
       label: 'Link label to the referenced webform'
-    dialog:
-      type: string
-      label: 'Open referenced webform in modal dialog'
-    attributes:
-      type: ignore
-      label: 'Link attributes'

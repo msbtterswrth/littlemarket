@@ -2,7 +2,10 @@
 
 namespace Drupal\Tests\paragraphs\Functional;
 
-use Drupal\Tests\paragraphs\Functional\Experimental\ParagraphsExperimentalTestBase;
+use Drupal\paragraphs\Tests\Classic\ParagraphsCoreVersionUiTestTrait;
+use Drupal\Tests\BrowserTestBase;
+use Drupal\Tests\paragraphs\FunctionalJavascript\LoginAdminTrait;
+use Drupal\Tests\paragraphs\FunctionalJavascript\ParagraphsTestBaseTrait;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\node\Entity\Node;
 
@@ -11,7 +14,11 @@ use Drupal\node\Entity\Node;
  *
  * @group paragraphs
  */
-class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTestBase {
+class ParagraphsExperimentalWidgetButtonsTest extends BrowserTestBase {
+
+  use LoginAdminTrait;
+  use ParagraphsCoreVersionUiTestTrait;
+  use ParagraphsTestBaseTrait;
 
   /**
    * Modules to enable.
@@ -467,42 +474,6 @@ class ParagraphsExperimentalWidgetButtonsTest extends ParagraphsExperimentalTest
     // Check if the text paragraph is opened and the container is also opened.
     $this->checkParagraphInMode('field_paragraphs_0', 'edit');
     $this->checkParagraphInMode('field_paragraphs_1', 'edit');
-  }
-
-  /**
-   * Tests 'Select list' add mode logic.
-   */
-  public function testAddModeSelect() {
-    $this->loginAsAdmin();
-    $this->addParagraphedContentType('paragraphed_test', 'paragraphs');
-
-    $this->addParagraphsType('test_paragraph');
-    $this->addParagraphsType('text');
-    $this->addFieldtoParagraphType('text', 'field_text_demo', 'text');
-    $settings = [
-      'add_mode' => 'select',
-      'edit_mode' => 'closed',
-      'closed_mode' => 'summary',
-    ];
-    $this->setParagraphsWidgetSettings('paragraphed_test', 'paragraphs', $settings, 'paragraphs');
-    $this->drupalGet('node/add/paragraphed_test');
-    $this->assertSession()->selectExists('paragraphs[add_more][add_more_select]');
-
-    $edit = [
-      'settings[handler_settings][negate]' => 0,
-      'settings[handler_settings][target_bundles_drag_drop][text][enabled]' => 1,
-    ];
-    $this->drupalPostForm('admin/structure/types/manage/paragraphed_test/fields/node.paragraphed_test.paragraphs', $edit, 'Save settings');
-
-    $this->drupalGet('node/add/paragraphed_test');
-    $this->assertSession()->fieldNotExists('paragraphs[add_more][add_more_select]');
-    $this->getSession()->getPage()->findButton('paragraphs_add_more')->press();
-    $edit = [
-      'title[0][value]' => 'Demo text title',
-      'paragraphs[0][subform][field_text_demo][0][value]' => 'Demo text for the detail page',
-    ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertSession()->pageTextContains('Demo text for the detail page');
   }
 
   /**

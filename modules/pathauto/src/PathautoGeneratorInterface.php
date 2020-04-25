@@ -49,7 +49,6 @@ interface PathautoGeneratorInterface {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   An entity.
-   *
    * @return \Drupal\pathauto\PathautoPatternInterface|null
    */
   public function getPatternByEntity(EntityInterface $entity);
@@ -85,6 +84,6 @@ interface PathautoGeneratorInterface {
    *   - An array with alias data in case the alias has been created or updated.
    *   - NULL if no operation performed.
    */
-  public function updateEntityAlias(EntityInterface $entity, $op, array $options = []);
+  public function updateEntityAlias(EntityInterface $entity, $op, array $options = array());
 
 }

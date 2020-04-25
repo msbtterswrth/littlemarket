@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\smart_trim\Unit;
+namespace Drupal\smart_trim\Tests;
 
 use Drupal\smart_trim\Truncate\TruncateHTML;
 use Drupal\Tests\UnitTestCase;

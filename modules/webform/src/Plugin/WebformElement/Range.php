@@ -23,7 +23,7 @@ class Range extends NumericBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     $properties = [
       // Number settings.
       'min' => 0,
@@ -34,21 +34,16 @@ class Range extends NumericBase {
       'output__field_prefix' => '',
       'output__field_suffix' => '',
       'output__attributes' => [],
-    ] + parent::defineDefaultProperties();
+    ] + parent::getDefaultProperties();
     unset(
       $properties['size'],
       $properties['minlength'],
       $properties['maxlength'],
       $properties['placeholder'],
-      $properties['autocomplete'],
-      $properties['format_items'],
-      $properties['format_items_html'],
-      $properties['format_items_text']
+      $properties['autocomplete']
     );
     return $properties;
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -61,6 +56,8 @@ class Range extends NumericBase {
       '#min' => $this->getDefaultProperty('min'),
       '#max' => $this->getDefaultProperty('max'),
     ];
+
+    $element['#element_validate'][] = [get_class($this), 'validateRange'];
 
     // If no custom range output is defined then exit.
     if (empty($element['#output'])) {
@@ -86,9 +83,6 @@ class Range extends NumericBase {
       // Create output (number) element.
       $output = [
         '#type' => 'number',
-        '#title' => $element['#title'],
-        '#title_display' => 'invisible',
-        '#id' => $webform_key . '__output',
         '#name' => $webform_key . '__output',
       ];
 
@@ -96,7 +90,7 @@ class Range extends NumericBase {
       $properties = ['#min', '#max', '#step', '#disabled'];
       $output += array_intersect_key($element, array_combine($properties, $properties));
 
-      // Copy custom output properties to output element.
+      // Copy custom output properties to ouput element.
       foreach ($element as $key => $value) {
         if (strpos($key, '#output__') === 0) {
           $output_key = str_replace('#output__', '#', $key);
@@ -158,14 +152,6 @@ class Range extends NumericBase {
   /**
    * {@inheritdoc}
    */
-  protected function prepareElementValidateCallbacks(array &$element, WebformSubmissionInterface $webform_submission = NULL) {
-    parent::prepareElementValidateCallbacks($element, $webform_submission);
-    $element['#element_validate'][] = [get_class($this), 'validateRange'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function preview() {
     return parent::preview() + [
       '#min' => 0,
@@ -194,10 +180,10 @@ class Range extends NumericBase {
       '#title' => $this->t("Output the range's value"),
       '#empty_option' => $this->t('- None -'),
       '#options' => [
-        'right' => $this->t('Right'),
-        'left' => $this->t('Left'),
-        'above' => $this->t('Above (Floating)'),
-        'below' => $this->t('Below (Floating)'),
+        'right' => t('Right'),
+        'left' => t('Left'),
+        'above' => t('Above (Floating)'),
+        'below' => t('Below (Floating)'),
       ],
     ];
 
@@ -237,9 +223,10 @@ class Range extends NumericBase {
    * @see \Drupal\Core\Render\Element\Range::valueCallback
    */
   public static function validateRange(array &$element, FormStateInterface $form_state, array &$completed_form) {
-    $value = $element['#value'];
+    $name = $element['#name'];
+    $value = $form_state->getValue($name);
     $value = ($value === 0) ? '0' : (string) $value;
-    $form_state->setValueForElement($element, $value);
+    $form_state->setValue($name, $value);
   }
 
 }

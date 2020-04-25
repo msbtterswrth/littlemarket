@@ -15,14 +15,11 @@ abstract class BooleanBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     return [
       'default_value' => FALSE,
-      'return_value' => '',
-    ] + parent::defineDefaultProperties();
+    ] + parent::getDefaultProperties();
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -37,13 +34,7 @@ abstract class BooleanBase extends WebformElementBase {
         return ($value) ? $this->t('Yes') : $this->t('No');
 
       default:
-        // If a #return_value is defined then return it.
-        if (!empty($element['#return_value'])) {
-          return ($value) ? $value : 0;
-        }
-        else {
-          return ($value) ? 1 : 0;
-        }
+        return ($value) ? 1 : 0;
     }
   }
 
@@ -60,17 +51,6 @@ abstract class BooleanBase extends WebformElementBase {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    // Add return value to default value details.
-    $form['default']['#title'] = $this->t('Return/default value');
-    $form['default']['return_value'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Return value'),
-      '#description' => $this->t('The return value is what is submitted to the server and stored in the database when the element is checked. The default value and recommended return value is a TRUE boolean value.')
-        . $this->t('<br/><br/>')
-        . $this->t('<strong>The return value should only be customized when an external system or service expects a custom string value. (i.e. yes, checked, accepted, etc…)</strong>'),
-      '#weight' => -20,
-    ];
-    // Change default value to select boolean.
     $form['default']['default_value'] = [
       '#title' => $this->t('Default value'),
       '#type' => 'select',

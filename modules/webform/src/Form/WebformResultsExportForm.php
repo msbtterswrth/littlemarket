@@ -80,11 +80,6 @@ class WebformResultsExportForm extends FormBase {
       '#access' => ($saved_options) ? TRUE : FALSE,
       '#submit' => ['::delete'],
     ];
-
-    // Disable single submit.
-    $form['#attributes']['class'][] = 'webform-remove-single-submit';
-    $form['#attached']['library'][] = 'webform/webform.form';
-
     return $form;
   }
 
@@ -126,7 +121,7 @@ class WebformResultsExportForm extends FormBase {
     // Save the export options to the webform's state.
     $export_options = $this->submissionExporter->getValuesFromInput($form_state->getValues());
     $this->submissionExporter->setWebformOptions($export_options);
-    $this->messenger()->addStatus($this->t('The download settings have been saved.'));
+    drupal_set_message($this->t('The download settings have been saved.'));
   }
 
   /**
@@ -139,7 +134,7 @@ class WebformResultsExportForm extends FormBase {
    */
   public function delete(array &$form, FormStateInterface $form_state) {
     $this->submissionExporter->deleteWebformOptions();
-    $this->messenger()->addStatus($this->t('The download settings have been reset.'));
+    drupal_set_message($this->t('The download settings have been reset.'));
   }
 
 }

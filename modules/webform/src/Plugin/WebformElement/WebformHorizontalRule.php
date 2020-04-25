@@ -26,20 +26,6 @@ class WebformHorizontalRule extends WebformElementBase implements WebformElement
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
-    return [
-      'states' => [],
-      'attributes' => [],
-      // Markup settings.
-      'display_on' => static::DISPLAY_ON_FORM,
-    ];
-  }
-
-  /****************************************************************************/
-
-  /**
-   * {@inheritdoc}
-   */
   public function isInput(array $element) {
     return FALSE;
   }
@@ -49,6 +35,18 @@ class WebformHorizontalRule extends WebformElementBase implements WebformElement
    */
   public function isContainer(array $element) {
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultProperties() {
+    return [
+      'states' => [],
+      'attributes' => [],
+      // Markup settings.
+      'display_on' => static::DISPLAY_ON_FORM,
+    ];
   }
 
   /**
@@ -84,7 +82,7 @@ class WebformHorizontalRule extends WebformElementBase implements WebformElement
       return [];
     }
 
-    return ['#plain_text' => PHP_EOL . '---' . PHP_EOL];
+    return PHP_EOL . '---' . PHP_EOL;
   }
 
   /**

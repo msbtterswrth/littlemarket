@@ -4,14 +4,11 @@ namespace Drupal\metatag;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides a listing of Metatag defaults entities.
  */
 class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
-
-  use StringTranslationTrait;
 
   /**
    * {@inheritdoc}
@@ -59,7 +56,6 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
    */
   public function buildHeader() {
     $header['label'] = $this->t('Type');
-    $header['status'] = $this->t('Status');
     return $header + parent::buildHeader();
   }
 
@@ -68,7 +64,6 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row['label'] = $this->getLabelAndConfig($entity);
-    $row['status'] = $entity->status() ? $this->t('Active') : $this->t('Disabled');
     return $row + parent::buildRow($entity);
   }
 
@@ -82,7 +77,7 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
     if (in_array($entity->id(), MetatagManager::protectedDefaults())) {
       unset($operations['delete']);
       $operations['revert'] = [
-        'title' => $this->t('Revert'),
+        'title' => t('Revert'),
         'weight' => $operations['edit']['weight'] + 1,
         'url' => $entity->toUrl('revert-form'),
       ];
@@ -110,12 +105,12 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
     }
     if (strpos($entity->id(), '__') !== FALSE) {
       $prefix .= '<div class="indentation"></div>';
-      $entity_label = explode(': ', $entity->get('label'));
-      $inherits .= ', ' . $entity_label[0];
+      list($entity_label, $bundle_label) = explode(': ', $entity->get('label'));
+      $inherits .= ', ' . $entity_label;
     }
 
     if (!empty($inherits)) {
-      $output .= '<div><p>' . $this->t('Inherits meta tags from: @inherits', [
+      $output .= '<div><p>' . t('Inherits meta tags from: @inherits', [
         '@inherits' => $inherits,
       ]) . '</p></div>';
     }
@@ -141,16 +136,6 @@ class MetatagDefaultsListBuilder extends ConfigEntityListBuilder {
         ],
       ],
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function render() {
-    if (\Drupal::state()->get('system.maintenance_mode')) {
-      \Drupal::messenger()->addMessage($this->t('Please note that while the site is in maintenance mode none of the usual meta tags will be output.'));
-    }
-    return parent::render();
   }
 
 }

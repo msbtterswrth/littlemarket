@@ -21,11 +21,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class WebformUiElementTestForm extends WebformUiElementFormBase {
 
   /**
-   * {@inheritdoc}
-   */
-  protected $operation = 'test';
-
-  /**
    * Type of webform element being tested.
    *
    * @var string
@@ -160,7 +155,7 @@ class WebformUiElementTestForm extends WebformUiElementFormBase {
       ];
     }
 
-    // Clear all messages including 'Unable to display this webform…' which is
+    // Clear all messages including 'Unable to display this webform...' which is
     // generated because we are using a temp webform.
     // drupal_get_messages();
     return $form;
@@ -171,7 +166,7 @@ class WebformUiElementTestForm extends WebformUiElementFormBase {
    */
   public function reset(array &$form, FormStateInterface $form_state) {
     \Drupal::request()->getSession()->remove('webform_ui_test_element_' . $this->type);
-    $this->messenger()->addStatus($this->t('Webform element %type test has been reset.', ['%type' => $this->type]));
+    drupal_set_message($this->t('Webform element %type test has been reset.', ['%type' => $this->type]));
   }
 
   /**
@@ -197,7 +192,7 @@ class WebformUiElementTestForm extends WebformUiElementFormBase {
 
     \Drupal::request()->getSession()->set('webform_ui_test_element_' . $this->type, $properties);
 
-    $this->messenger()->addStatus($this->t('Webform element %type test has been updated.', ['%type' => $this->type]));
+    drupal_set_message($this->t('Webform element %type test has been updated.', ['%type' => $this->type]));
   }
 
   /**

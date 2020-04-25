@@ -2,7 +2,7 @@
 
 namespace Drupal\webform;
 
-use Drupal\Core\Archiver\ArchiverManager;
+use Drupal\Core\Archiver\ArchiveTar;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -13,9 +13,7 @@ use Drupal\Core\StreamWrapper\StreamWrapperInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\webform\Entity\WebformSubmission;
-use Drupal\webform\Element\WebformAjaxElementTrait;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
-use Drupal\webform\Plugin\WebformExporterInterface;
 use Drupal\webform\Plugin\WebformExporterManagerInterface;
 
 /**
@@ -24,7 +22,6 @@ use Drupal\webform\Plugin\WebformExporterManagerInterface;
 class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
 
   use StringTranslationTrait;
-  use WebformAjaxElementTrait;
 
   /**
    * The configuration object factory.
@@ -53,13 +50,6 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
    * @var \Drupal\Core\StreamWrapper\StreamWrapperManagerInterface
    */
   protected $streamWrapperManager;
-
-  /**
-   * The archiver manager.
-   *
-   * @var \Drupal\Core\Archiver\ArchiverManager
-   */
-  protected $archiverManager;
 
   /**
    * Webform element manager.
@@ -121,19 +111,16 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
    *   The entity type manager.
    * @param \Drupal\Core\StreamWrapper\StreamWrapperManagerInterface $stream_wrapper_manager
    *   The stream wrapper manager.
-   * @param \Drupal\Core\Archiver\ArchiverManager $archiver_manager
-   *   The archiver manager.
    * @param \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager
    *   The webform element manager.
    * @param \Drupal\webform\Plugin\WebformExporterManagerInterface $exporter_manager
    *   The results exporter manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, FileSystemInterface $file_system, EntityTypeManagerInterface $entity_type_manager, StreamWrapperManagerInterface $stream_wrapper_manager, ArchiverManager $archiver_manager, WebformElementManagerInterface $element_manager, WebformExporterManagerInterface $exporter_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, FileSystemInterface $file_system, EntityTypeManagerInterface $entity_type_manager, StreamWrapperManagerInterface $stream_wrapper_manager, WebformElementManagerInterface $element_manager, WebformExporterManagerInterface $exporter_manager) {
     $this->configFactory = $config_factory;
     $this->fileSystem = $file_system;
     $this->entityStorage = $entity_type_manager->getStorage('webform_submission');
     $this->streamWrapperManager = $stream_wrapper_manager;
-    $this->archiverManager = $archiver_manager;
     $this->elementManager = $element_manager;
     $this->exporterManager = $exporter_manager;
   }
@@ -252,7 +239,6 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       'excel' => FALSE,
 
       'file_name' => 'submission-[webform_submission:serial]',
-      'archive_type' => 'tar',
 
       'header_format' => 'label',
       'header_prefix' => TRUE,
@@ -278,13 +264,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       'files' => FALSE,
     ];
 
-    // Append webform exporter default options.
-    $exporter_plugins = $this->exporterManager->getInstances();
-    foreach ($exporter_plugins as $element_type => $element_plugin) {
-      $this->defaultOptions += $element_plugin->defaultConfiguration();
-    }
-
-    // Append webform element default options.
+    // Append element handler default options.
     $element_types = $this->getWebformElementTypes();
     $element_plugins = $this->elementManager->getInstances();
     foreach ($element_plugins as $element_type => $element_plugin) {
@@ -305,44 +285,23 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
 
     $webform = $this->getWebform();
 
-    // Get exporter plugins.
+    // Get exporter and build #states.
     $exporter_plugins = $this->exporterManager->getInstances($export_options);
-
-    // Build #states.
     $states_archive = ['invisible' => []];
     $states_options = ['invisible' => []];
-    $states_files = [
-      'invisible' => [
-        [':input[name="download"]' => ['checked' => FALSE]],
-      ],
-    ];
-    $states_archive_type = ['visible' => []];
-    if ($webform && $webform->hasManagedFile()) {
-      $states_archive_type['visible'][] = [':input[name="files"]' => ['checked' => TRUE]];
-    }
     foreach ($exporter_plugins as $plugin_id => $exporter_plugin) {
       if ($exporter_plugin->isArchive()) {
-        $this->appendExporterToStates($states_archive, $plugin_id);
+        if ($states_archive['invisible']) {
+          $states_archive['invisible'][] = 'or';
+        }
+        $states_archive['invisible'][] = [':input[name="exporter"]' => ['value' => $plugin_id]];
       }
       if (!$exporter_plugin->hasOptions()) {
-        $this->appendExporterToStates($states_options, $plugin_id);
+        if ($states_options['invisible']) {
+          $states_options['invisible'][] = 'or';
+        }
+        $states_options['invisible'][] = [':input[name="exporter"]' => ['value' => $plugin_id]];
       }
-      if (!$exporter_plugin->hasFiles()) {
-        $this->appendExporterToStates($states_files, $plugin_id);
-      }
-      if ($webform && $exporter_plugin->isArchive()) {
-        $this->appendExporterToStates($states_archive_type, $plugin_id);
-      }
-    }
-    $form['#attributes']['data-webform-states-no-clear'] = TRUE;
-
-    // Build the list of exporter descriptions.
-    $exporters = $this->exporterManager->getInstances();
-    $exporter_description = '';
-    foreach ($exporters as $exporter) {
-      $exporter_description .= '<hr/>';
-      $exporter_description .= '<div><strong>' . $exporter->label() . '</strong></div>';
-      $exporter_description .= '<div>' . $exporter->description() . '</div>';
     }
 
     $form['export']['format'] = [
@@ -354,7 +313,6 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       '#type' => 'select',
       '#title' => $this->t('Export format'),
       '#options' => $this->exporterManager->getOptions(),
-      '#description' => $exporter_description,
       '#default_value' => $export_options['exporter'],
       // Below .js-webform-exporter is used for exporter configuration form
       // #states.
@@ -473,217 +431,177 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
 
     // All the remain options are only applicable to a webform's export.
     // @see Drupal\webform\Form\WebformResultsExportForm
-    if ($webform) {
-      // Elements.
-      $form['export']['columns'] = [
-        '#type' => 'details',
-        '#title' => $this->t('Column options'),
-        '#description' => $this->t('The selected columns will be included in the export.'),
-        '#states' => $states_options,
-      ];
-      $form['export']['columns']['excluded_columns'] = [
-        '#type' => 'webform_excluded_columns',
-        '#webform_id' => $webform->id(),
-        '#default_value' => $export_options['excluded_columns'],
-      ];
+    if (!$webform) {
+      return;
+    }
 
-      // Download options.
-      $form['export']['download'] = [
-        '#type' => 'details',
-        '#title' => $this->t('Download options'),
-        '#open' => TRUE,
-      ];
-      $form['export']['download']['download'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Download export file'),
-        '#description' => $this->t('If checked, the export file will be automatically download to your local machine. If unchecked, the export file will be displayed as plain text within your browser.'),
-        '#return_value' => TRUE,
-        '#default_value' => $export_options['download'],
-        '#access' => !$this->requiresBatch(),
-        '#states' => $states_archive,
-      ];
-      $form['export']['download']['files'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Download uploaded files'),
-        '#description' => $this->t('If checked, the exported file and any submission file uploads will be download in the archive file.'),
-        '#return_value' => TRUE,
-        '#default_value' => ($webform->hasManagedFile()) ? $export_options['files'] : 0,
-        '#access' => $webform->hasManagedFile(),
-        '#states' => $states_files,
-      ];
+    // Elements.
+    $form['export']['columns'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Column options'),
+      '#description' => $this->t('The selected columns will be included in the export.'),
+      '#states' => $states_options,
+    ];
+    $form['export']['columns']['excluded_columns'] = [
+      '#type' => 'webform_excluded_columns',
+      '#webform_id' => $webform->id(),
+      '#default_value' => $export_options['excluded_columns'],
+    ];
 
-      $source_entity = $this->getSourceEntity();
-      if (!$source_entity) {
-        $entity_types = $this->entityStorage->getSourceEntityTypes($webform);
-        if ($entity_types) {
-          $form['export']['download']['submitted'] = [
-            '#type' => 'item',
-            '#input' => FALSE,
-            '#title' => $this->t('Submitted to'),
-            '#description' => $this->t('Select the entity type and then enter the entity id.'),
-            '#field_prefix' => '<div class="container-inline">',
-            '#field_suffix' => '</div>',
-          ];
-          $form['export']['download']['submitted']['entity_type'] = [
-            '#type' => 'select',
-            '#title' => $this->t('Entity type'),
-            '#title_display' => 'invisible',
-            '#options' => ['' => $this->t('All')] + $entity_types,
-            '#default_value' => $export_options['entity_type'],
-          ];
-          if ($export_options['entity_type']) {
-            $source_entity_options = $this->entityStorage->getSourceEntityAsOptions($webform, $export_options['entity_type']);
-            if ($source_entity_options) {
-              $form['export']['download']['submitted']['entity_id'] = [
-                '#type' => 'select',
-                '#title' => $this->t('Entity id'),
-                '#title_display' => 'invisible',
-                '#default_value' => $export_options['entity_id'],
-                '#options' => $source_entity_options,
-              ];
-            }
-            else {
-              $form['export']['download']['submitted']['entity_id'] = [
-                '#type' => 'number',
-                '#title' => $this->t('Entity id'),
-                '#title_display' => 'invisible',
-                '#min' => 1,
-                '#size' => 10,
-                '#default_value' => $export_options['entity_id'],
-              ];
-            }
-          }
-          else {
-            $form['export']['download']['submitted']['entity_id'] = [
-              '#type' => 'value',
-              '#value' => '',
-            ];
-          }
-          $this->buildAjaxElement(
-            'webform-submission-export-download-submitted',
-            $form['export']['download']['submitted'],
-            $form['export']['download']['submitted']['entity_type']
-          );
-        }
-      }
-
-      $form['export']['download']['range_type'] = [
-        '#type' => 'select',
-        '#title' => $this->t('Limit to'),
-        '#options' => [
-          'all' => $this->t('All'),
-          'latest' => $this->t('Latest'),
-          'serial' => $this->t('Submission number'),
-          'sid' => $this->t('Submission ID'),
-          'date' => $this->t('Date'),
+    // Download options.
+    $form['export']['download'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Download options'),
+      '#open' => TRUE,
+    ];
+    $form['export']['download']['download'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Download export file'),
+      '#description' => $this->t('If checked, the export file will be automatically download to your local machine. If unchecked, the export file will be displayed as plain text within your browser.'),
+      '#return_value' => TRUE,
+      '#default_value' => $export_options['download'],
+      '#access' => !$this->requiresBatch(),
+      '#states' => $states_archive,
+    ];
+    $form['export']['download']['files'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Download uploaded files'),
+      '#description' => $this->t('If checked, the exported file and any submission file uploads will be download in a gzipped tar file.'),
+      '#return_value' => TRUE,
+      '#default_value' => ($webform->hasManagedFile()) ? $export_options['files'] : 0,
+      '#access' => $webform->hasManagedFile(),
+      '#states' => [
+        'invisible' => [
+          ':input[name="download"]' => ['checked' => FALSE],
         ],
-        '#default_value' => $export_options['range_type'],
-      ];
-      $form['export']['download']['latest'] = [
-        '#type' => 'container',
-        '#attributes' => ['class' => ['container-inline']],
-        '#states' => [
-          'visible' => [
-            ':input[name="range_type"]' => ['value' => 'latest'],
-          ],
-        ],
-        'range_latest' => [
+      ],
+    ];
+
+    $source_entity = $this->getSourceEntity();
+    if (!$source_entity) {
+      $entity_types = $this->entityStorage->getSourceEntityTypes($webform);
+      if ($entity_types) {
+        $form['export']['download']['submitted'] = [
+          '#type' => 'item',
+          '#input' => FALSE,
+          '#title' => $this->t('Submitted to'),
+          '#description' => $this->t('Select the entity type and then enter the entity id.'),
+          '#field_prefix' => '<div class="container-inline">',
+          '#field_suffix' => '</div>',
+        ];
+        $form['export']['download']['submitted']['entity_type'] = [
+          '#type' => 'select',
+          '#title' => $this->t('Entity type'),
+          '#title_display' => 'Invisible',
+          '#options' => ['' => $this->t('All')] + $entity_types,
+          '#default_value' => $export_options['entity_type'],
+        ];
+        $form['export']['download']['submitted']['entity_id'] = [
           '#type' => 'number',
-          '#title' => $this->t('Number of submissions'),
+          '#title' => $this->t('Entity id'),
+          '#title_display' => 'Invisible',
           '#min' => 1,
-          '#default_value' => $export_options['range_latest'],
-        ],
-      ];
-      $ranges = [
-        'serial' => ['#type' => 'number'],
-        'sid' => ['#type' => 'number'],
-        'date' => ['#type' => 'date'],
-      ];
-      foreach ($ranges as $key => $range_element) {
-        $form['export']['download'][$key] = [
-          '#type' => 'container',
-          '#attributes' => ['class' => ['container-inline']],
-          '#tree' => TRUE,
+          '#size' => 10,
+          '#default_value' => $export_options['entity_id'],
           '#states' => [
-            'visible' => [
-              ':input[name="range_type"]' => ['value' => $key],
+            'invisible' => [
+              ':input[name="entity_type"]' => ['value' => ''],
             ],
           ],
         ];
-        $form['export']['download'][$key]['range_start'] = $range_element + [
+      }
+    }
+
+    $form['export']['download']['range_type'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Limit to'),
+      '#options' => [
+        'all' => $this->t('All'),
+        'latest' => $this->t('Latest'),
+        'serial' => $this->t('Submission number'),
+        'sid' => $this->t('Submission ID'),
+        'date' => $this->t('Date'),
+      ],
+      '#default_value' => $export_options['range_type'],
+    ];
+    $form['export']['download']['latest'] = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['container-inline']],
+      '#states' => [
+        'visible' => [
+          ':input[name="range_type"]' => ['value' => 'latest'],
+        ],
+      ],
+      'range_latest' => [
+        '#type' => 'number',
+        '#title' => $this->t('Number of submissions'),
+        '#min' => 1,
+        '#default_value' => $export_options['range_latest'],
+      ],
+    ];
+    $ranges = [
+      'serial' => ['#type' => 'number'],
+      'sid' => ['#type' => 'number'],
+      'date' => ['#type' => 'date'],
+    ];
+    foreach ($ranges as $key => $range_element) {
+      $form['export']['download'][$key] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['container-inline']],
+        '#tree' => TRUE,
+        '#states' => [
+          'visible' => [
+            ':input[name="range_type"]' => ['value' => $key],
+          ],
+        ],
+      ];
+      $form['export']['download'][$key]['range_start'] = $range_element + [
           '#title' => $this->t('From'),
           '#parents' => [$key, 'range_start'],
           '#default_value' => $export_options['range_start'],
         ];
-        $form['export']['download'][$key]['range_end'] = $range_element + [
+      $form['export']['download'][$key]['range_end'] = $range_element + [
           '#title' => $this->t('To'),
           '#parents' => [$key, 'range_end'],
           '#default_value' => $export_options['range_end'],
         ];
-      }
-      $form['export']['download']['order'] = [
-        '#type' => 'select',
-        '#title' => $this->t('Order'),
-        '#description' => $this->t('Order submissions by ascending (oldest first) or descending (newest first).'),
-        '#options' => [
-          'asc' => $this->t('Sort ascending'),
-          'desc' => $this->t('Sort descending'),
+    }
+    $form['export']['download']['order'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Order'),
+      '#description' => $this->t('Order submissions by ascending (oldest first) or descending (newest first).'),
+      '#options' => [
+        'asc' => $this->t('Sort ascending'),
+        'desc' => $this->t('Sort descending'),
+      ],
+      '#default_value' => $export_options['order'],
+      '#states' => [
+        'visible' => [
+          ':input[name="range_type"]' => ['!value' => 'latest'],
         ],
-        '#default_value' => $export_options['order'],
-        '#states' => [
-          'visible' => [
-            ':input[name="range_type"]' => ['!value' => 'latest'],
-          ],
-        ],
-      ];
-      $form['export']['download']['sticky'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Starred/flagged submissions'),
-        '#description' => $this->t('If checked, only starred/flagged submissions will be downloaded. If unchecked, all submissions will downloaded.'),
-        '#return_value' => TRUE,
-        '#default_value' => $export_options['sticky'],
-      ];
+      ],
+    ];
+    $form['export']['download']['sticky'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Starred/flagged submissions'),
+      '#description' => $this->t('If checked, only starred/flagged submissions will be downloaded. If unchecked, all submissions will downloaded.'),
+      '#return_value' => TRUE,
+      '#default_value' => $export_options['sticky'],
+    ];
 
-      // If drafts are allowed, provide options to filter download based on
-      // submission state.
-      $form['export']['download']['state'] = [
-        '#type' => 'radios',
-        '#title' => $this->t('Submission state'),
-        '#default_value' => $export_options['state'],
-        '#options' => [
-          'all' => $this->t('Completed and draft submissions'),
-          'completed' => $this->t('Completed submissions only'),
-          'draft' => $this->t('Drafts only'),
-        ],
-        '#access' => ($webform->getSetting('draft') != WebformInterface::DRAFT_NONE),
-      ];
-    }
-
-    // Archive.
-    if (class_exists('\ZipArchive')) {
-      $form['export']['archive'] = [
-        '#type' => 'details',
-        '#title' => $this->t('Archive options'),
-        '#open' => TRUE,
-        '#states' => $states_archive_type,
-      ];
-      $form['export']['archive']['archive_type'] = [
-        '#type' => 'select',
-        '#title' => $this->t('Archive file type'),
-        '#description' => $this->t('Select the archive file type for submission file uploads and generated documents.'),
-        '#default_value' => $export_options['archive_type'],
-        '#options' => [
-          WebformExporterInterface::ARCHIVE_TAR => $this->t('Tar archive (*.tar.gz)'),
-          WebformExporterInterface::ARCHIVE_ZIP => $this->t('ZIP file (*.zip)'),
-        ],
-      ];
-    }
-    else {
-      $form['export']['archive_type'] = [
-        '#type' => 'value',
-        '#value' => WebformExporterInterface::ARCHIVE_TAR,
-      ];
-    }
+    // If drafts are allowed, provide options to filter download based on
+    // submission state.
+    $form['export']['download']['state'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Submission state'),
+      '#default_value' => $export_options['state'],
+      '#options' => [
+        'all' => $this->t('Completed and draft submissions'),
+        'completed' => $this->t('Completed submissions only'),
+        'draft' => $this->t('Drafts only'),
+      ],
+      '#access' => ($webform->getSetting('draft') != WebformInterface::DRAFT_NONE),
+    ];
   }
 
   /**
@@ -710,22 +628,6 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     $values = array_intersect_key($values, $this->getDefaultExportOptions());
 
     return $values;
-  }
-
-  /**
-   * Append exporter plugin id to #states API array.
-   *
-   * @param array $states
-   *   A #states API array.
-   * @param string $plugin_id
-   *   The exporter plugin id.
-   */
-  protected function appendExporterToStates(array &$states, $plugin_id) {
-    $state = key($states);
-    if ($states[$state]) {
-      $states[$state][] = 'or';
-    }
-    $states[$state][] = [':input[name="exporter"]' => ['value' => $plugin_id]];
   }
 
   /****************************************************************************/
@@ -768,6 +670,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     $is_archive = ($this->isArchive() && $export_options['files']);
     $files_directories = [];
     if ($is_archive) {
+      $archiver = new ArchiveTar($this->getArchiveFilePath(), 'gz');
       $stream_wrappers = array_keys($this->streamWrapperManager->getNames(StreamWrapperInterface::WRITE_VISIBLE));
       foreach ($stream_wrappers as $stream_wrapper) {
         $files_directory = $this->fileSystem->realpath($stream_wrapper . '://webform/' . $webform->id());
@@ -782,11 +685,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
           $submission_directory = $files_directory . '/' . $webform_submission->id();
           if (file_exists($submission_directory)) {
             $file_name = $this->getSubmissionBaseName($webform_submission);
-            $this->getExporter()->addToArchive(
-              $submission_directory,
-              $file_name,
-              ['remove_path' => $submission_directory]
-            );
+            $archiver->addModify($submission_directory, $file_name, $submission_directory);
           }
         }
       }
@@ -811,11 +710,11 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
   public function writeExportToArchive() {
     $export_file_path = $this->getExportFilePath();
     if (file_exists($export_file_path)) {
-      $this->getExporter()->addToArchive(
-        $export_file_path,
-        $this->getBaseFileName(),
-        ['remove_path' => $this->getFileTempDirectory(), 'close' => TRUE]
-      );
+      $archive_file_path = $this->getArchiveFilePath();
+
+      $archiver = new ArchiveTar($archive_file_path, 'gz');
+      $archiver->addModify($export_file_path, $this->getBaseFileName(), $this->getFileTempDirectory());
+
       @unlink($export_file_path);
     }
   }
@@ -894,7 +793,6 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
     if ($export_options['range_type'] == 'latest' && $export_options['range_latest']) {
       // Clone the query and use it to get latest sid starting sid.
       $latest_query = clone $query;
-      $latest_query->sort('created', 'DESC');
       $latest_query->sort('sid', 'DESC');
       $latest_query->range(0, (int) $export_options['range_latest']);
       if ($latest_query_entity_ids = $latest_query->execute()) {
@@ -902,15 +800,9 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       }
     }
     else {
-      // Sort by created and sid in ASC or DESC order.
-      $query->sort('created', isset($export_options['order']) ? $export_options['order'] : 'ASC');
+      // Sort by sid in ASC or DESC order.
       $query->sort('sid', isset($export_options['order']) ? $export_options['order'] : 'ASC');
     }
-
-    // Do not check access to submission since the exporter UI and Drush
-    // already have access checking.
-    // @see webform_query_webform_submission_access_alter()
-    $query->accessCheck(FALSE);
 
     return $query;
   }
@@ -960,27 +852,21 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
    * {@inheritdoc}
    */
   public function getBatchLimit() {
-    return $this->getExporter()->getBatchLimit();
+    return $this->configFactory->get('webform.settings')->get('batch.default_batch_export_size') ?: 500;
   }
 
   /**
    * {@inheritdoc}
    */
   public function requiresBatch() {
-    // Get the unfiltered total number of submissions for the webform and
-    // source entity.
-    $total = $this->entityStorage->getTotal(
-      $this->getWebform(),
-      $this->getSourceEntity()
-    );
-    return ($total > $this->getBatchLimit()) ? TRUE : FALSE;
+    return ($this->getTotal() > $this->getBatchLimit()) ? TRUE : FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getFileTempDirectory() {
-    return $this->configFactory->get('webform.settings')->get('export.temp_directory') ?: file_directory_temp();
+    return file_directory_temp();
   }
 
   /**
@@ -1043,18 +929,6 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
    */
   public function isBatch() {
     return ($this->isArchive() || ($this->getTotal() >= $this->getBatchLimit()));
-  }
-
-  /**
-   * Construct an instance of archive tar object.
-   *
-   * @return \Archive_Tar
-   *   Archive tar object.
-   *
-   * @deprecated Scheduled for removal in Webform 8.x-6.x
-   */
-  protected function getArchiveTar() {
-    return new \Archive_Tar($this->getArchiveFilePath(), 'gz');
   }
 
 }

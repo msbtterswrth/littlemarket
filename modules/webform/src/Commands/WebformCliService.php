@@ -2,18 +2,16 @@
 
 namespace Drupal\webform\Commands;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Variable;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Mail\MailFormatHelper;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\webform\Controller\WebformResultsExportController;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Form\WebformResultsClearForm;
 use Drupal\webform\Form\WebformSubmissionsPurgeForm;
-use Drupal\webform\Utility\WebformObjectHelper;
 use Drupal\webform\Utility\WebformYaml;
-use Drupal\webform_submission_export_import\Form\WebformSubmissionExportImportUploadForm;
 use Drush\Commands\DrushCommands;
 use Psr\Log\LogLevel;
 
@@ -92,13 +90,11 @@ class WebformCliService implements WebformCliServiceInterface {
         'webform' => 'The webform ID you want to export (required unless --entity-type and --entity-id are specified)',
       ],
       'options' => [
-        'exporter' => 'The type of export. (delimited, table, yaml, or json)',
         // Delimited export options.
         'delimiter' => 'Delimiter between columns (defaults to site-wide setting). This option may need to be wrapped in quotes. i.e. --delimiter="\t".',
         'multiple-delimiter' => 'Delimiter between an element with multiple values (defaults to site-wide setting).',
         // Document and managed file export options.
         'file-name' => 'File name used to export submission and uploaded filed. You may use tokens.',
-        'archive-type' => 'Archive file type for submission file uploadeds and generated records. (tar or zip)',
         // Tabular export options.
         'header-format' => 'Set to "label" (default) or "key"',
         'options-item-format' => 'Set to "label" (default) or "key". Set to "key" to print select list values by their keys instead of labels.',
@@ -106,8 +102,6 @@ class WebformCliService implements WebformCliServiceInterface {
         'options-multiple-format' => 'Set to "separate" (default) or "compact" to determine how multiple select list values are exported.',
         'entity-reference-items' => 'Comma-separated list of entity reference items (id, title, and/or url) to be exported.',
         'excluded-columns' => 'Comma-separated list of component IDs or webform keys to exclude.',
-        // CSV options
-        'uuid' => ' Use UUIDs for all entity references. (Only applies to CSV download)',
         // Download options.
         'entity-type' => 'The entity type to which this submission was submitted from.',
         'entity-id' => 'The ID of the entity of which this webform submission was submitted from.',
@@ -120,28 +114,9 @@ class WebformCliService implements WebformCliServiceInterface {
         'sticky' => 'Flagged/starred submission status.',
         'files' => 'Download files: "1" or "0" (default). If set to 1, the exported CSV file and any submission file uploads will be download in a gzipped tar file.',
         // Output options.
-        'destination' => 'The full path and filename in which the CSV or archive should be stored. If omitted the CSV file or archive will be outputted to the command line.',
+        'destination' => 'The full path and filename in which the CSV or archive should be stored. If omitted the CSV file or archive will be outputted to the commandline.',
       ],
       'aliases' => ['wfx'],
-    ];
-
-    $items['webform-import'] = [
-      'description' => 'Imports webform submissions from a CSV file.',
-      'core' => ['8+'],
-      'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_SITE,
-      'arguments' => [
-        'webform' => 'The webform ID you want to import (required unless --entity-type and --entity-id are specified)',
-        'import_uri' => 'The path or URI for the CSV file to be imported.',
-      ],
-      'options' => [
-        // Import options.
-        'skip_validation' => 'Skip form validation.',
-        'treat_warnings_as_errors' => 'Treat all warnings as errors.',
-        // Source entity options.
-        'entity-type' => 'The entity type to which this submission was submitted from.',
-        'entity-id' => 'The ID of the entity of which this webform submission was submitted from.',
-      ],
-      'aliases' => ['wfi'],
     ];
 
     $items['webform-purge'] = [
@@ -152,7 +127,7 @@ class WebformCliService implements WebformCliServiceInterface {
         'webform_id' => "A webform machine name. If not provided, user may choose from a list of names.",
       ],
       'options' => [
-        'all' => '[boolean] Flush all submissions',
+        'all' => 'Flush all submissions',
         'entity-type' => 'The entity type for webform submissions to be purged',
         'entity-id' => 'The ID of the entity for webform submissions to be purged',
       ],
@@ -171,7 +146,7 @@ class WebformCliService implements WebformCliServiceInterface {
       'core' => ['8+'],
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
       'options' => [
-        'dependencies' => '[boolean] Add module dependencies to installed webform and options configuration entities.',
+        'dependencies' => 'Add module dependencies to installed webform and options configuration entities.',
         'prefix' => 'Prefix for file names to be tidied. (Defaults to webform)',
       ],
       'arguments' => [
@@ -209,9 +184,6 @@ class WebformCliService implements WebformCliServiceInterface {
       'description' => "Generates the Webform module's composer.json with libraries as repositories.",
       'core' => ['8+'],
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
-      'options' => [
-        'disable-tls' => '[boolean] If set to true all HTTPS URLs will be tried with HTTP instead and no network level encryption is performed.',
-      ],
       'examples' => [
         'webform-libraries-composer' => "Generates the Webform module's composer.json with libraries as repositories.",
       ],
@@ -247,7 +219,7 @@ class WebformCliService implements WebformCliServiceInterface {
         'num' => 'Number of submissions to insert. Defaults to 50.',
       ],
       'options' => [
-        'kill' => '[boolean] Delete all submissions in specified webform before generating.',
+        'kill' => 'Delete all submissions in specified webform before generating.',
         'feedback' => 'An integer representing interval for insertion rate logging. Defaults to 1000',
         'entity-type' => 'The entity type to which this submission was submitted from.',
         'entity-id' => 'The ID of the entity of which this webform submission was submitted from.',
@@ -258,11 +230,11 @@ class WebformCliService implements WebformCliServiceInterface {
     /* Repair */
 
     $items['webform-repair'] = [
-      'description' => 'Makes sure all Webform admin configuration and webform settings are up-to-date.',
+      'description' => 'Makes sure all Webform admin settings and webforms are up-to-date.',
       'core' => ['8+'],
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
       'examples' => [
-        'webform-repair' => 'Repairs admin configuration and webform settings are up-to-date.',
+        'webform-repair' => 'Repairs admin settings and webforms are up-to-date.',
       ],
       'aliases' => ['wfr'],
     ];
@@ -285,9 +257,6 @@ class WebformCliService implements WebformCliServiceInterface {
       'description' => "Updates the Drupal installation's composer.json to include the Webform module's selected libraries as repositories.",
       'core' => ['8+'],
       'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_ROOT,
-      'options' => [
-        'disable-tls' => '[boolean] If set to true all HTTPS URLs will be tried with HTTP instead and no network level encryption is performed.',
-      ],
       'examples' => [
         'webform-composer-update' => "Updates the Drupal installation's composer.json to include the Webform module's selected libraries as repositories.",
       ],
@@ -363,76 +332,12 @@ class WebformCliService implements WebformCliServiceInterface {
     $file_path = ($submission_exporter->isArchive()) ? $submission_exporter->getArchiveFilePath() : $submission_exporter->getExportFilePath();
     if (isset($export_options['destination'])) {
       $this->drush_print($this->dt('Created @destination', ['@destination' => $export_options['destination']]));
-      \Drupal::service('file_system')->copy($file_path, $export_options['destination'], FileSystemInterface::EXISTS_REPLACE);
+      file_unmanaged_copy($file_path, $export_options['destination'], FILE_EXISTS_REPLACE);
     }
     else {
       $this->drush_print(file_get_contents($file_path));
     }
     @unlink($file_path);
-
-    return NULL;
-  }
-
-  /******************************************************************************/
-  // Import.
-  /******************************************************************************/
-
-  /**
-   * {@inheritdoc}
-   */
-  public function drush_webform_import_validate($webform_id = NULL, $import_uri = NULL) {
-    if (!\Drupal::moduleHandler()->moduleExists('webform_submission_export_import')) {
-      return $this->drush_set_error($this->dt('The Webform Submission Export/Import module must be enabled to perform imports.'));
-    }
-
-    if ($errors = $this->_drush_webform_validate($webform_id)) {
-      return $errors;
-    }
-
-    if (empty($import_uri)) {
-      return $this->drush_set_error($this->dt('Please include the CSV path or URI.'));
-    }
-    if (file_exists($import_uri)) {
-      return NULL;
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function drush_webform_import($webform_id = NULL, $import_uri = NULL) {
-    /** @var \Drupal\webform_submission_export_import\WebformSubmissionExportImportImporterInterface $submission_importer */
-    $submission_importer = \Drupal::service('webform_submission_export_import.importer');
-
-    // Get webform.
-    $webform = Webform::load($webform_id);
-
-    // Get source entity.
-    $entity_type = $this->drush_get_option('entity-type');
-    $entity_id = $this->drush_get_option('entity-id');
-    if ($entity_type && $entity_id) {
-      $source_entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
-    }
-    else {
-      $source_entity = NULL;
-    }
-
-    // Get import options
-    $import_options = $this->_drush_get_options($submission_importer->getDefaultImportOptions());
-
-    $submission_importer->setWebform($webform);
-    $submission_importer->setSourceEntity($source_entity);
-    $submission_importer->setImportOptions($import_options);
-    $submission_importer->setImportUri($import_uri);;
-    $t_args = ['@total' => $submission_importer->getTotal()];
-    if (!$this->drush_confirm($this->dt('Are you sure you want to import @total submissions?', $t_args) . PHP_EOL . $this->dt('This action cannot be undone.'))) {
-      return $this->drush_user_abort();
-    }
-
-    WebformSubmissionExportImportUploadForm::batchSet($webform, $source_entity, $import_uri, $import_options);
-    $this->drush_backend_batch_process();
 
     return NULL;
   }
@@ -483,8 +388,7 @@ class WebformCliService implements WebformCliServiceInterface {
 
     // Make sure there are submissions that need to be deleted.
     if (!$submission_storage->getTotal($webform)) {
-      $this->drush_print($this->dt('There are no submissions that need to be deleted.'));
-      return;
+      return $this->drush_set_error($this->dt('There are no submissions that need to be deleted.'));
     }
 
     if (!$webform) {
@@ -574,42 +478,30 @@ class WebformCliService implements WebformCliServiceInterface {
       $original_yaml = file_get_contents($file->uri);
       $tidied_yaml = $original_yaml;
 
-      try {
-        $data = Yaml::decode($tidied_yaml);
-      }
-      catch (\Exception $exception) {
-        $message = 'Error parsing: ' . $file->filename . PHP_EOL . $exception->getMessage();
-        if (strlen($message) > 255) {
-          $message = substr($message, 0, 255) . '…';
-        }
-        $this->drush_log($message, LogLevel::ERROR);
-        $this->drush_print($message);
-        continue;
-      }
-
-      // Tidy elements.
-      if (strpos($file->filename, 'webform.webform.') === 0 && isset($data['elements'])) {
-        try {
-          $elements = WebformYaml::tidy($data['elements']);
-          $data['elements'] = $elements;
-        }
-        catch (\Exception $exception) {
-          // Do nothing.
-        }
-      }
-
       // Add module dependency to exporter webform and webform options config entities.
       if ($dependencies && preg_match('/^(webform\.webform\.|webform\.webform_options\.)/', $file->filename)) {
-        if (empty($data['dependencies']['enforced']['module']) || !in_array($target, $data['dependencies']['enforced']['module'])) {
-          $this->drush_print($this->dt('Adding module dependency to @file…', ['@file' => $file->filename]));
-          $data['dependencies']['enforced']['module'][] = $target;
+        try {
+          $data = Yaml::decode($tidied_yaml);
+          if (empty($data['dependencies']['enforced']['module']) || !in_array($target, $data['dependencies']['enforced']['module'])) {
+            $this->drush_print($this->dt('Adding module dependency to @file...', ['@file' => $file->filename]));
+            $data['dependencies']['enforced']['module'][] = $target;
+            $tidied_yaml = Yaml::encode($data);
+          }
+        }
+        catch (\Exception $exception) {
+          $message = 'Error parsing: ' . $file->filename . PHP_EOL . $exception->getMessage();
+          if (strlen($message) > 255) {
+            $message = substr($message, 0, 255) . '...';
+          }
+          $this->drush_log($message, LogLevel::ERROR);
+          $this->drush_print($message);
         }
       }
 
       // Tidy and add new line to the end of the tidied file.
-      $tidied_yaml = WebformYaml::encode($data) . PHP_EOL;
+      $tidied_yaml = WebformYaml::tidy($tidied_yaml) . PHP_EOL;
       if ($tidied_yaml != $original_yaml) {
-        $this->drush_print($this->dt('Tidying @file…', ['@file' => $file->filename]));
+        $this->drush_print($this->dt('Tidying @file...', ['@file' => $file->filename]));
         file_put_contents($file->uri, $tidied_yaml);
         $total++;
       }
@@ -704,26 +596,68 @@ class WebformCliService implements WebformCliServiceInterface {
    * {@inheritdoc}
    */
   public function drush_webform_libraries_composer() {
-    // Load existing composer.json file and unset certain properties.
-    $composer_path = drupal_get_path('module', 'webform') . '/composer.json';
-    $json = file_get_contents($composer_path);
-    $data = json_decode($json , FALSE, $this->drush_webform_composer_get_json_encode_options());
-    $data = (array) $data;
-    unset($data['extra'], $data['require-dev']);
-    $data = (object) $data;
+    /** @var \Drupal\webform\WebformLibrariesManagerInterface $libraries_manager */
+    $libraries_manager = \Drupal::service('webform.libraries_manager');
+    $libraries = $libraries_manager->getLibraries(TRUE);
 
-    // Set disable tls.
-    $this->drush_webform_composer_set_disable_tls($data);
-
-    // Set libraries.
-    $data->repositories = (object) [];
-    $data->require = (object) [];
-    $this->drush_webform_composer_set_libraries($data->repositories, $data->require);
-    // Remove _webform property.
-    foreach ($data->repositories as &$repository) {
-      unset($repository['_webform']);
+    // Load existing composer.json file.
+    $data = json_decode('{
+  "name": "drupal/webform",
+  "description": "Enables the creation of webforms and questionnaires.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "homepage": "https://drupal.org/project/webform",
+  "authors": [
+    {
+      "name": "Jacob Rockowitz (jrockowitz)",
+      "homepage": "https://www.drupal.org/u/jrockowitz",
+      "role": "Maintainer"
     }
-    $this->drush_print(json_encode($data, $this->drush_webform_composer_get_json_encode_options()));
+  ],
+  "support": {
+    "issues": "https://drupal.org/project/issues/webform",
+    "source": "http://cgit.drupalcode.org/webform"
+  }
+}', TRUE);
+
+    $repositories = [];
+    $require = [];
+    foreach ($libraries as $library_name => $library) {
+      $dist_url = $library['download_url']->toString();
+      $dist_type = (preg_match('/\.zip$/', $dist_url)) ? 'zip' : 'file';
+      $package_version = $library['version'];
+      $package_name = (strpos($library_name, '.') === FALSE) ? "$library_name/$library_name" : str_replace('.', '/', $library_name);
+
+      $repositories[$library_name] = [
+        'type' => 'package',
+        'package' => [
+          'name' => $package_name,
+          'version' => $package_version ,
+          'type' => 'drupal-library',
+          'extra' => [
+            'installer-name' => $library_name,
+          ],
+          'dist' => [
+            'url' => $dist_url,
+            'type' => $dist_type,
+          ],
+          'require' => [
+            'composer/installers' => '~1.0',
+          ],
+        ],
+      ];
+
+      $require[$package_name] = $package_version;
+    }
+    ksort($repositories);
+    ksort($require);
+    $data['repositories'] = $repositories;
+    // Drupal.org test bot is throwing...
+    // Your requirements could not be resolved to an installable set of packages.
+    $data['require'] = $require;
+
+    $this->drush_print(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
   }
 
   /**
@@ -732,7 +666,7 @@ class WebformCliService implements WebformCliServiceInterface {
   public function drush_webform_libraries_download() {
     // Remove all existing libraries (including excluded).
     if ($this->drush_webform_libraries_remove(FALSE)) {
-      $this->drush_print($this->dt('Removing existing libraries…'));
+      $this->drush_print($this->dt('Removing existing libraries...'));
     }
 
     $temp_dir = $this->drush_tempdir();
@@ -741,11 +675,6 @@ class WebformCliService implements WebformCliServiceInterface {
     $libraries_manager = \Drupal::service('webform.libraries_manager');
     $libraries = $libraries_manager->getLibraries(TRUE);
     foreach ($libraries as $library_name => $library) {
-      // Skip libraries installed by other modules.
-      if (!empty($library['module'])) {
-        continue;
-      }
-
       // Download archive to temp directory.
       $download_url = $library['download_url']->toString();
       $this->drush_print("Downloading $download_url");
@@ -789,15 +718,13 @@ class WebformCliService implements WebformCliServiceInterface {
   public function drush_webform_libraries_remove($status = NULL) {
     $status = ($status !== FALSE);
     if ($status) {
-      $this->drush_print($this->dt('Beginning to remove libraries…'));
+      $this->drush_print($this->dt('Beginning to remove libraries...'));
     }
     $removed = FALSE;
 
     /** @var \Drupal\webform\WebformLibrariesManagerInterface $libraries_manager */
     $libraries_manager = \Drupal::service('webform.libraries_manager');
     $libraries = $libraries_manager->getLibraries();
-    // Manually add deleted libraries, so that they will always be removed.
-    $libraries['jquery.word-and-character-counter'] = 'jquery.word-and-character-counter';
     foreach ($libraries as $library_name => $library) {
       $library_path = '/libraries/' . $library_name;
       $library_exists = (file_exists(DRUPAL_ROOT . $library_path)) ? TRUE : FALSE;
@@ -809,7 +736,7 @@ class WebformCliService implements WebformCliServiceInterface {
             '@name' => $library_name,
             '@path' => $library_path,
           ];
-          $this->drush_print($this->dt('@name removed from @path…', $t_args));
+          $this->drush_print($this->dt('@name removed from @path...', $t_args));
         }
       }
     }
@@ -826,8 +753,6 @@ class WebformCliService implements WebformCliServiceInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @see \Drupal\webform\Form\AdminConfig\WebformAdminConfigAdvancedForm::submitForm
    */
   public function drush_webform_repair() {
     if (!$this->drush_confirm($this->dt("Are you sure you want repair the Webform module's admin settings and webforms?"))) {
@@ -836,35 +761,23 @@ class WebformCliService implements WebformCliServiceInterface {
 
     module_load_include('install', 'webform');
 
-    $this->drush_print($this->dt('Repairing webform submission storage schema…'));
-    _webform_update_webform_submission_storage_schema();
-
-    $this->drush_print($this->dt('Repairing admin configuration…'));
+    $this->drush_print('Repairing admin settings...');
     _webform_update_admin_settings(TRUE);
 
-    $this->drush_print($this->dt('Repairing webform settings…'));
+    $this->drush_print('Repairing webform settings...');
     _webform_update_webform_settings();
 
-    $this->drush_print($this->dt('Repairing webform handlers…'));
-    _webform_update_webform_handler_settings();
+    $this->drush_print('Repairing webform handlers...');
+    _webform_update_webform_handler_configuration();
 
-    $this->drush_print($this->dt('Repairing webform field storage definitions…'));
+    $this->drush_print('Repairing webform field storage definitions...');
     _webform_update_field_storage_definitions();
 
-    $this->drush_print($this->dt('Repairing webform submission storage schema…'));
+    $this->drush_print('Repairing webform submission storage schema...');
     _webform_update_webform_submission_storage_schema();
 
-    if (\Drupal::moduleHandler()->moduleExists('webform_entity_print')) {
-      $this->drush_print($this->dt('Repairing webform entity print settings…'));
-      module_load_include('install', 'webform_entity_print');
-      webform_entity_print_install();
-    }
-
-    $this->drush_print($this->dt('Removing (unneeded) webform submission translation settings…'));
-    _webform_update_webform_submission_translation();
-
     // Validate all webform elements.
-    $this->drush_print($this->dt('Validating webform elements…'));
+    $this->drush_print('Validating webform elements...');
     /** @var \Drupal\webform\WebformEntityElementsValidatorInterface $elements_validator */
     $elements_validator = \Drupal::service('webform.elements_validator');
 
@@ -872,7 +785,7 @@ class WebformCliService implements WebformCliServiceInterface {
     $webforms = Webform::loadMultiple();
     foreach ($webforms as $webform) {
       if ($messages = $elements_validator->validate($webform)) {
-        $this->drush_print('  ' . $this->dt('@title (@id): Found element validation errors.', ['@title' => $webform->label(), '@id' => $webform->id()]));
+        $this->drush_print('  ' . t('@title (@id): Found element validation errors.', ['@title' => $webform->label(), '@id' => $webform->id()]));
         foreach ($messages as $message) {
           $this->drush_print('  - ' . strip_tags($message));
         }
@@ -978,7 +891,7 @@ class WebformCliService implements WebformCliServiceInterface {
     // Configuration.
     // - http://us3.php.net/manual/en/book.tidy.php
     // - http://tidy.sourceforge.net/docs/quickref.html#wrap
-    $config = ['show-body-only' => TRUE, 'wrap' => '10000'];
+    $config = ['show-body-only' => TRUE, 'wrap' => '0'];
 
     $tidy = new \tidy();
     $tidy->parseString($html, $config, 'utf8');
@@ -991,9 +904,6 @@ class WebformCliService implements WebformCliServiceInterface {
     // Remove <code> tag nested within <pre> tag.
     $html = preg_replace('#<pre><code>\s*#', "<code>\n", $html);
     $html = preg_replace('#\s*</code></pre>#', "\n</code>", $html);
-
-    // Fix code in webform-libraries.html.
-    $html = str_replace(' &gt; ', ' > ', $html);
 
     // Remove space after <br> tags.
     $html = preg_replace('/(<br[^>]*>)\s+/', '\1', $html);
@@ -1052,110 +962,48 @@ class WebformCliService implements WebformCliServiceInterface {
     $composer_directory = $this->composer_directory;
 
     $json = file_get_contents($composer_json);
-    $data = json_decode($json, FALSE, $this->drush_webform_composer_get_json_encode_options());
-    if (!isset($data->repositories)) {
-      $data->repositories = (object) [];
-    }
-    if (!isset($data->require)) {
-      $data->repositories = (object) [];
-    }
+    $data = Json::decode($json) + [
+        'repositories' => [],
+        'require' => [],
+      ];
 
     // Add drupal-library to installer paths.
     if (strpos($json, 'type:drupal-library') === FALSE) {
-      $library_path = $composer_directory . 'libraries/{$name}';
-      $data->extra->{'installer-paths'}->{$library_path}[] = 'type:drupal-library';
+      $data['extra']['installer-paths'][$composer_directory . 'libraries/{$name}'][] = 'type:drupal-library';
     }
 
     // Get repositories and require.
-    $repositories = &$data->repositories;
-    $require = &$data->require;
+    $repositories = &$data['repositories'];
+    $require = &$data['require'];
 
     // Remove all existing _webform repositories.
     foreach ($repositories as $repository_name => $repository) {
-      if (!empty($repository->_webform)) {
-        $package_name = $repositories->{$repository_name}->package->name;
-        unset($repositories->{$repository_name}, $require->{$package_name});
+      if (!empty($repository['_webform'])) {
+        $package_name = $repositories[$repository_name]['package']['name'];
+        unset($repositories[$repository_name], $require[$package_name]);
       }
     }
 
-    // Set disable tls.
-    $this->drush_webform_composer_set_disable_tls($data);
-
-    // Set libraries.
-    $this->drush_webform_composer_set_libraries($repositories, $require);
-
-    file_put_contents($composer_json, json_encode($data, $this->drush_webform_composer_get_json_encode_options()));
-
-    $this->drush_print("$composer_json updated.");
-    $this->drush_print('Make sure to run `composer update --lock`.');
-  }
-
-  /**
-   * Get Composer specific JSON encode options.
-   *
-   * @return int
-   *   Composer specific JSON encode options.
-   *
-   * @see https://getcomposer.org/apidoc/1.6.2/Composer/Json/JsonFile.html#method_encode
-   */
-  protected function drush_webform_composer_get_json_encode_options() {
-    return JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE;
-  }
-
-  /**
-   * Set composer disable tls.
-   *
-   * This is needed when CKEditor's HTTPS server's SSL is not working properly.
-   *
-   * @param object $data
-   *   Composer JSON data.
-   */
-  protected function drush_webform_composer_set_disable_tls(&$data) {
-    // Remove disable-tls config.
-    if (isset($data->config) && isset($data->config->{'disable-tls'})) {
-      unset($data->config->{'disable-tls'});
-    }
-    if ($this->drush_get_option('disable-tls')) {
-      $data->config->{'disable-tls'} = TRUE;
-    }
-  }
-
-  /**
-   * Set composer libraries.
-   *
-   * @param object $repositories
-   *   Composer repositories.
-   * @param object $require
-   *   Composer require.
-   */
-  protected function drush_webform_composer_set_libraries(&$repositories, &$require) {
     /** @var \Drupal\webform\WebformLibrariesManagerInterface $libraries_manager */
     $libraries_manager = \Drupal::service('webform.libraries_manager');
     $libraries = $libraries_manager->getLibraries(TRUE);
+    // Track if recommended secure_http: true can be used.
+    // @see Issue #2885338: Composer: CKeditor plugins are downloadable with http.
+    $secure_http = TRUE;
     foreach ($libraries as $library_name => $library) {
       // Never overwrite existing repositories.
-      if (isset($repositories->{$library_name})) {
-        continue;
-      }
-
-      // Skip libraries installed by other modules.
-      if (!empty($library['module'])) {
+      if (isset($repositories[$library_name])) {
         continue;
       }
 
       $dist_url = $library['download_url']->toString();
-      if (preg_match('/\.zip$/', $dist_url)) {
-        $dist_type = 'zip';
-      }
-      elseif (preg_match('/\.tgz$/', $dist_url)) {
-        $dist_type = 'tar';
-      }
-      else {
-        $dist_type = 'file';
-      }
+      $dist_type = (preg_match('/\.zip$/', $dist_url)) ? 'zip' : 'file';
       $package_version = $library['version'];
       $package_name = (strpos($library_name, '.') === FALSE) ? "$library_name/$library_name" : str_replace('.', '/', $library_name);
-      $repositories->$library_name = [
+      if (strpos($dist_url, 'http://') === 0) {
+        $secure_http = FALSE;
+      }
+      $repositories[$library_name] = [
         '_webform' => TRUE,
         'type' => 'package',
         'package' => [
@@ -1175,10 +1023,26 @@ class WebformCliService implements WebformCliServiceInterface {
         ],
       ];
 
-      $require->$package_name = '*';
+      $require[$package_name] = $package_version;
     }
-    $repositories = WebformObjectHelper::sortByProperty($repositories);
-    $require = WebformObjectHelper::sortByProperty($require);
+    ksort($repositories);
+    ksort($require);
+
+    if ($secure_http) {
+      unset($data['config']['secure-http']);
+    }
+    else {
+      $this->drush_print('Secure HTTP had to be disabled to support CKEditor add-ons.');
+      $this->drush_print('@see http://dgo.to/2885338');
+      $this->drush_print('@see https://getcomposer.org/doc/06-config.md#secure-http');
+      $data['config']['secure-http'] = FALSE;
+    }
+
+    $json_options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
+    file_put_contents($composer_json, json_encode($data, $json_options));
+
+    $this->drush_print("$composer_json updated.");
+    $this->drush_print('Make sure to run `composer update`.');
   }
 
   /******************************************************************************/
@@ -1214,6 +1078,7 @@ class WebformCliService implements WebformCliServiceInterface {
     $items = $this->webform_drush_command();
     $functions = [];
     foreach ($items as $command_key => $command_item) {
+
       // Command name.
       $functions[] = "
 /******************************************************************************/
@@ -1221,8 +1086,8 @@ class WebformCliService implements WebformCliServiceInterface {
 /******************************************************************************/";
 
       // Validate.
-      $validate_method = 'drush_' . str_replace('-', '_', $command_key) . '_validate';
-      $validate_hook = 'drush_' . str_replace('-', '_', $command_key) . '_validate';
+      $validate_method = 'drush_' . str_replace('-','_', $command_key) . '_validate';
+      $validate_hook = 'drush_' . str_replace('-','_', $command_key) . '_validate';
       if (method_exists($this, $validate_method)) {
         $functions[] = "
 /**
@@ -1234,8 +1099,8 @@ function $validate_hook() {
       }
 
       // Commands.
-      $command_method = 'drush_' . str_replace('-', '_', $command_key);
-      $command_hook = 'drush_' . str_replace('-', '_', $command_key);
+      $command_method = 'drush_' . str_replace('-','_', $command_key);
+      $command_hook = 'drush_' . str_replace('-','_', $command_key);
       if (method_exists($this, $command_method)) {
         $functions[] = "
 /**
@@ -1247,18 +1112,9 @@ function $command_hook() {
       }
     }
 
-    // Build commands.
-    $drush_command = $this->webform_drush_command();
-    foreach ($drush_command as $command_key => &$command_item) {
-      $command_item += ['aliases' => []];
-      $command_item['aliases'][] = str_replace('-', ':', $command_key);
-    }
-    $commands = Variable::export($drush_command);
-    // Remove [datatypes] which are only needed for Drush 9.x.
-    $commands = preg_replace('/\[(boolean)\]\s+/', '', $commands);
-    $commands = trim(preg_replace('/^/m', '  ', $commands));
-
     // Include.
+    $commands = Variable::export($this->webform_drush_command());
+    $commands = trim(preg_replace('/^/m', '  ', $commands));
     $functions = implode(PHP_EOL, $functions) . PHP_EOL;
 
     return "<?php
@@ -1271,8 +1127,6 @@ function $command_hook() {
  * @see drush webform-generate-commands
  * @see \Drupal\webform\Commands\DrushCliServiceBase::generate_commands_drush8
  */
-
-require_once __DIR__ . '/webform.drush.hooks.inc';
 
 /**
  * Implements hook_drush_command().
@@ -1297,7 +1151,7 @@ $functions
 
     $methods = [];
     foreach ($items as $command_key => $command_item) {
-      $command_name = str_replace('-', ':', $command_key);
+      $command_name = str_replace('-',':', $command_key);
 
       // Set defaults.
       $command_item += [
@@ -1314,7 +1168,7 @@ $functions
   /****************************************************************************/";
 
       // Validate.
-      $validate_method = 'drush_' . str_replace('-', '_', $command_key) . '_validate';
+      $validate_method = 'drush_' . str_replace('-','_', $command_key) . '_validate';
       if (method_exists($this, $validate_method)) {
         $methods[] = "
   /**
@@ -1328,7 +1182,7 @@ $functions
       }
 
       // Command.
-      $command_method = 'drush_' . str_replace('-', '_', $command_key);
+      $command_method = 'drush_' . str_replace('-','_', $command_key);
       if (method_exists($this, $command_method)) {
         $command_params = [];
         $command_arguments = [];
@@ -1345,19 +1199,8 @@ $functions
         // options.
         $command_options = [];
         foreach ($command_item['options'] as $option_name => $option_description) {
-          $option_default = NULL;
-          // Parse [datatype] from option description.
-          if (preg_match('/\[(boolean)\]\s+/', $option_description, $match)) {
-            $option_description = preg_replace('/\[(boolean)\]\s+/', '', $option_description);
-            switch ($match[1]) {
-              case 'boolean':
-                $option_default = FALSE;
-                break;
-            }
-          }
-
           $command_annotations[] = "@option $option_name $option_description";
-          $command_options[$option_name] = $option_default;
+          $command_options[$option_name] = NULL;
         }
         if ($command_options) {
           $command_options = Variable::export($command_options);
@@ -1369,16 +1212,12 @@ $functions
 
         // usage.
         foreach ($command_item['examples'] as $example_name => $example_description) {
-          $example_name = str_replace('-', ':', $example_name);
           $command_annotations[] = "@usage $example_name";
           $command_annotations[] = "  $example_description";
         }
-
         // aliases.
-        $aliases = array_merge($command_item['aliases'] ?: [], [str_replace(':', '-', $command_name)]);
-        $aliases = array_unique($aliases);
-        if ($aliases) {
-          $command_annotations[] = "@aliases " . implode(',', $aliases);
+        if ($command_item['aliases']) {
+          $command_annotations[] = "@aliases " . implode(',', $command_item['aliases']);
         }
 
         $command_annotations = '   * ' . implode(PHP_EOL . '   * ', $command_annotations);
@@ -1471,40 +1310,16 @@ $methods
     return NULL;
   }
 
-  /**
-   * Get drush command options with dashed converted to underscores.
-   *
-   * @param array $default_options
-   *   The commands default options
-   *
-   * @return array
-   *   An associative array of options.
-   */
-  protected function _drush_get_options(array $default_options) {
-    $options = $this->drush_redispatch_get_options();
-    // Convert dashes to underscores.
-    foreach ($options as $key => $value) {
-      unset($options[$key]);
-      if (isset($default_options[$key]) && is_array($default_options[$key])) {
-        $value = explode(',', $value);
-      }
-      $options[str_replace('-', '_', $key)] = $value;
-    }
-    $options += $default_options;
-    return $options;
-  }
-
 }
 
 // Add dt() function so that the WebformEditorialController can extract
 // editorial.
 // @see \Drupal\webform_editorial\Controller\WebformEditorialController::drush
 if (!function_exists('dt')) {
-
   /**
    * Rudimentary replacement for Drupal API t() function.
    *
-   * @param string $string
+   * @param string
    *   String to process, possibly with replacement item.
    *
    * @return string
@@ -1513,5 +1328,5 @@ if (!function_exists('dt')) {
   function dt($string) {
     return $string;
   }
-
 }
+

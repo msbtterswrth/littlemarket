@@ -89,7 +89,6 @@
 
       case 'user':
       case 'state':
-      case 'custom':
         $.get($element.find('.js-webform-message__link').attr('href'));
         return true;
     }

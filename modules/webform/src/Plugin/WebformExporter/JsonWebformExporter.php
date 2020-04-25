@@ -3,6 +3,7 @@
 namespace Drupal\webform\Plugin\WebformExporter;
 
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Archiver\ArchiveTar;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
@@ -24,7 +25,9 @@ class JsonWebformExporter extends DocumentBaseWebformExporter {
   public function writeSubmission(WebformSubmissionInterface $webform_submission) {
     $file_name = $this->getSubmissionBaseName($webform_submission) . '.json';
     $json = Json::encode($webform_submission->toArray(TRUE, TRUE));
-    $this->addToArchive($json, $file_name);
+
+    $archiver = new ArchiveTar($this->getArchiveFilePath(), 'gz');
+    $archiver->addString($file_name, $json);
   }
 
 }

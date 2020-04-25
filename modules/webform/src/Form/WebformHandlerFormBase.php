@@ -2,18 +2,14 @@
 
 namespace Drupal\webform\Form;
 
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
-use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
-use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\webform\Plugin\WebformHandlerInterface;
 use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\WebformInterface;
-use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a base webform for webform handlers.
@@ -21,32 +17,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class WebformHandlerFormBase extends FormBase {
 
   use WebformDialogFormTrait;
-
-  /**
-   * Machine name maxlenght.
-   */
-  const MACHINE_NAME_MAXLENGHTH = 64;
-
-  /**
-   * The language manager.
-   *
-   * @var \Drupal\Core\Language\LanguageManagerInterface
-   */
-  protected $languageManager;
-
-  /**
-   * The transliteration helper.
-   *
-   * @var \Drupal\Component\Transliteration\TransliterationInterface
-   */
-  protected $transliteration;
-
-  /**
-   * The token manager.
-   *
-   * @var \Drupal\webform\WebformTokenManagerInterface
-   */
-  protected $tokenManager;
 
   /**
    * The webform.
@@ -67,33 +37,6 @@ abstract class WebformHandlerFormBase extends FormBase {
    */
   public function getFormId() {
     return 'webform_handler_form';
-  }
-
-  /**
-   * Constructs a WebformHandlerFormBase.
-   *
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager.
-   * @param \Drupal\Component\Transliteration\TransliterationInterface $transliteration
-   *   The transliteration helper.
-   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
-   *   The webform token manager.
-   */
-  public function __construct(LanguageManagerInterface $language_manager, TransliterationInterface $transliteration, WebformTokenManagerInterface $token_manager) {
-    $this->languageManager = $language_manager;
-    $this->transliteration = $transliteration;
-    $this->tokenManager = $token_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('language_manager'),
-      $container->get('transliteration'),
-      $container->get('webform.token_manager')
-    );
   }
 
   /**
@@ -179,7 +122,7 @@ abstract class WebformHandlerFormBase extends FormBase {
     ];
     $form['general']['handler_id'] = [
       '#type' => 'machine_name',
-      '#maxlength' => static::MACHINE_NAME_MAXLENGHTH,
+      '#maxlength' => 64,
       '#description' => $this->t('A unique name for this handler instance. Must be alpha-numeric and underscore separated.'),
       '#default_value' => $this->webformHandler->getHandlerId() ?: $this->getUniqueMachineName($this->webformHandler),
       '#required' => TRUE,
@@ -233,8 +176,7 @@ abstract class WebformHandlerFormBase extends FormBase {
           'enabled' => $this->t('Enabled'),
           'disabled' => $this->t('Disabled'),
         ],
-        '#selector_options' => $webform->getElementsSelectorOptions(['excluded_elements' => []]),
-        '#selector_sources' => $webform->getElementsSelectorSourceValues(),
+        '#selector_options' => $webform->getElementsSelectorOptions(),
         '#multiple' => FALSE,
         '#default_value' => $this->webformHandler->getConditions(),
       ];
@@ -245,6 +187,13 @@ abstract class WebformHandlerFormBase extends FormBase {
     $form['weight'] = [
       '#type' => 'hidden',
       '#value' => $request->query->has('weight') ? (int) $request->query->get('weight') : $this->webformHandler->getWeight(),
+    ];
+
+    $form['actions'] = ['#type' => 'actions'];
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Save'),
+      '#button_type' => 'primary',
     ];
 
     // Build tabs.
@@ -268,20 +217,6 @@ abstract class WebformHandlerFormBase extends FormBase {
     ];
     $form = WebformFormHelper::buildTabs($form, $tabs);
 
-    $form['actions'] = ['#type' => 'actions'];
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Save'),
-      '#button_type' => 'primary',
-    ];
-
-    // Add token links below the form and on every tab.
-    $form['token_tree_link'] = $this->tokenManager->buildTreeElement();
-    if ($form['token_tree_link']) {
-      $form['token_tree_link'] += [
-        '#weight' => 101,
-      ];
-    }
     return $this->buildDialogForm($form, $form_state);
   }
 
@@ -329,49 +264,35 @@ abstract class WebformHandlerFormBase extends FormBase {
 
     if ($this instanceof WebformHandlerAddForm) {
       $this->webform->addWebformHandler($this->webformHandler);
-      $this->messenger()->addStatus($this->t('The webform handler was successfully added.'));
+      drupal_set_message($this->t('The webform handler was successfully added.'));
     }
     else {
       $this->webform->updateWebformHandler($this->webformHandler);
-      $this->messenger()->addStatus($this->t('The webform handler was successfully updated.'));
+      drupal_set_message($this->t('The webform handler was successfully updated.'));
     }
 
     $form_state->setRedirectUrl($this->webform->toUrl('handlers', ['query' => ['update' => $this->webformHandler->getHandlerId()]]));
   }
 
   /**
-   * Generates a unique translated machine name for a webform handler instance.
+   * Generates a unique machine name for a webform handler instance.
    *
    * @param \Drupal\webform\Plugin\WebformHandlerInterface $handler
    *   The webform handler.
    *
    * @return string
-   *   Returns a unique machine based the handler's plugin label.
-   *
-   * @see \Drupal\Core\Render\Element\MachineName
-   * @see \Drupal\system\MachineNameController::transliterate
+   *   Returns the unique name.
    */
   public function getUniqueMachineName(WebformHandlerInterface $handler) {
-    // Get label which default to the plugin's label for new instances.
-    $label = (string) $this->webformHandler->label();
-
-    // Get current langcode.
-    $langcode = $this->languageManager->getCurrentLanguage()->getId();
-
-    // Get machine name.
-    $suggestion = $this->transliteration->transliterate($label, $langcode, '_', static::MACHINE_NAME_MAXLENGHTH);
-    $suggestion = mb_strtolower($suggestion);
-    $suggestion = preg_replace('@' . strtr('[^a-z0-9_]+', ['@' => '\@', chr(0) => '']) . '@', '_', $suggestion);
-
-    // Increment the machine name.
+    $suggestion = $handler->getPluginId();
     $count = 1;
     $machine_default = $suggestion;
     $instance_ids = $this->webform->getHandlers()->getInstanceIds();
     while (isset($instance_ids[$machine_default])) {
       $machine_default = $suggestion . '_' . $count++;
     }
-
-    return $machine_default;
+    // Only return a suggestion if it is not the default plugin id.
+    return ($machine_default != $handler->getPluginId()) ? $machine_default : '';
   }
 
   /**
@@ -385,27 +306,8 @@ abstract class WebformHandlerFormBase extends FormBase {
    */
   public function exists($handler_id) {
     $instance_ids = $this->webform->getHandlers()->getInstanceIds();
+
     return (isset($instance_ids[$handler_id])) ? TRUE : FALSE;
-  }
-
-  /**
-   * Get the webform handler's webform.
-   *
-   * @return \Drupal\webform\WebformInterface
-   *   A webform.
-   */
-  public function getWebform() {
-    return $this->webform;
-  }
-
-  /**
-   * Get the webform handler.
-   *
-   * @return \Drupal\webform\Plugin\WebformHandlerInterface
-   *   A webform handler.
-   */
-  public function getWebformHandler() {
-    return $this->webformHandler;
   }
 
   /**

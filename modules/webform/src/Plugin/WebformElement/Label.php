@@ -10,16 +10,16 @@ namespace Drupal\webform\Plugin\WebformElement;
  *   api = "https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Render!Element!Label.php/class/Label",
  *   label = @Translation("Label"),
  *   description = @Translation("Provides an element for displaying the label for a form element."),
- *   category = @Translation("Markup elements"),
+ *   category = @Translation("Containers"),
  *   states_wrapper = TRUE,
  * )
  */
-class Label extends WebformMarkupBase {
+class Label extends ContainerBase {
 
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     return [
       'title' => '',
       // General settings.
@@ -28,10 +28,8 @@ class Label extends WebformMarkupBase {
       'required' => FALSE,
       // Attributes.
       'attributes' => [],
-    ] + $this->defineDefaultBaseProperties();
+    ] + $this->getDefaultBaseProperties();
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}

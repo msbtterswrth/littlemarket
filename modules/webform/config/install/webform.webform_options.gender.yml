@@ -11,3 +11,4 @@ likert: false
 options: |
   Male: Male
   Female: Female
+  Transgender: Transgender

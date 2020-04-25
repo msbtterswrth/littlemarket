@@ -62,10 +62,6 @@ imce.profile_conf.replace:
   type: integer
   label: 'Upload replace method'
 
-imce.profile_conf.thumbnail_style:
-  type: string
-  label: 'Thumbnail style'
-
 imce.profile_conf.folders:
   type: sequence
   label: 'Folders'

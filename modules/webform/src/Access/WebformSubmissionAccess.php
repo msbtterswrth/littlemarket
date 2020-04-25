@@ -15,14 +15,13 @@ class WebformSubmissionAccess {
    * Check whether a webform submissions' webform has wizard pages.
    *
    * @param \Drupal\webform\WebformSubmissionInterface $webform_submission
-   *   A webform submission.
+   *   A webform submisison.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
   public static function checkWizardPagesAccess(WebformSubmissionInterface $webform_submission) {
-    $condition = $webform_submission->getWebform()->hasWizardPages();
-    return AccessResult::allowedIf($condition);
+    return AccessResult::allowedIf($webform_submission->getWebform()->hasWizardPages());
   }
 
   /**
@@ -37,12 +36,11 @@ class WebformSubmissionAccess {
    *   The access result.
    */
   public static function checkResendAccess(WebformSubmissionInterface $webform_submission, AccountInterface $account) {
-    if ($webform_submission->getWebform()->hasMessageHandler()) {
+    $webform = $webform_submission->getWebform();
+    if ($webform->access('submission_update_any', $account) && $webform->hasMessageHandler()) {
       return AccessResult::allowed();
     }
-    else {
-      return AccessResult::forbidden();
-    }
+    return AccessResult::forbidden();
   }
 
 }

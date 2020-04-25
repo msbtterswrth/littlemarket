@@ -36,7 +36,7 @@ interface ParagraphInterface extends ContentEntityInterface, EntityOwnerInterfac
   public function setParentEntity(ContentEntityInterface $parent, $parent_field_name);
 
   /**
-   * Returns a short summary for the Paragraph.
+   * Returns short summary for paragraph.
    *
    * @param array $options
    *   (optional) Array of additional options, with the following elements:
@@ -47,25 +47,9 @@ interface ParagraphInterface extends ContentEntityInterface, EntityOwnerInterfac
    *     allowed. Defaults to 1 to show nested paragraphs only on top level.
    *
    * @return string
-   *   The template based summary.
+   *   The text without tags.
    */
   public function getSummary(array $options = []);
-
-  /**
-   * Returns the summary items of the Paragraph.
-   *
-   * @param array $options
-   *   (optional) Array of additional options, with the following elements:
-   *   - 'show_behavior_summary': Whether the summary should contain the
-   *     behavior settings. Defaults to TRUE to show behavior settings in the
-   *     summary.
-   *   - 'depth_limit': Depth limit of how many nested paragraph summaries are
-   *     allowed. Defaults to 1 to show nested paragraphs only on top level.
-   *
-   * @return array
-   *   A list of summary items, grouped into the keys 'content' and 'behaviors'.
-   */
-  public function getSummaryItems(array $options = []);
 
   /**
    * Returns info icons render array for a paragraph.

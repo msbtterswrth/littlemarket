@@ -12,7 +12,6 @@ use Drupal\webform\Plugin\Block\WebformBlock;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Tests webform submission bulk form actions.
@@ -27,7 +26,6 @@ class WebformBlockTest extends UnitTestCase {
    * Tests the dependencies of a webform block.
    */
   public function testCalculateDependencies() {
-    // Create mock webform and webform block.
     $webform = $this->getMockBuilder(WebformInterface::class)
       ->disableOriginalConstructor()
       ->getMock();
@@ -37,7 +35,35 @@ class WebformBlockTest extends UnitTestCase {
       ->willReturn('config');
     $webform->method('getConfigDependencyName')
       ->willReturn('config.webform.' . $webform->id());
-    $block = $this->mockWebformBlock($webform);
+
+    $entity_type_manager = $this->getMockBuilder(EntityTypeManagerInterface::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $storage = $this->getMockBuilder(EntityStorageInterface::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $entity_type_manager->method('getStorage')
+      ->willReturnMap([
+        ['webform', $storage],
+      ]);
+
+    $storage->method('load')
+      ->willReturnMap([
+        [$webform->id(), $webform],
+      ]);
+
+    $token_manager = $this->getMockBuilder(WebformTokenManagerInterface::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $block = new WebformBlock([
+      'webform_id' => $webform->id(),
+      'default_data' => [],
+    ], 'webform_block', [
+      'provider' => 'unit_test',
+    ], $entity_type_manager, $token_manager);
 
     $dependencies = $block->calculateDependencies();
     $expected = [
@@ -79,7 +105,6 @@ class WebformBlockTest extends UnitTestCase {
     $access_result->addCacheTags(['dummy_cache_tag']);
     $access_result->addCacheContexts($cache_contexts);
 
-    // Create mock webform and webform block.
     $webform = $this->getMockBuilder(WebformInterface::class)
       ->disableOriginalConstructor()
       ->getMock();
@@ -89,30 +114,6 @@ class WebformBlockTest extends UnitTestCase {
       ->willReturnMap([
         ['submission_create', $account, TRUE, $access_result],
       ]);
-    $block = $this->mockWebformBlock($webform);
-
-    $result = $block->access($account, TRUE);
-
-    // Make sure the block transparently follows the webform access logic.
-    $this->assertSame($access_result->isAllowed(), $result->isAllowed(), 'Block access yields the same result as the access of the webform.');
-    $this->assertEquals($access_result->getCacheContexts(), $result->getCacheContexts(), 'Block access has the same cache contexts as the access of the webform.');
-    $this->assertEquals($access_result->getCacheTags(), $result->getCacheTags(), 'Block access has the same cache tags as the access of the webform.');
-    $this->assertEquals($access_result->getCacheMaxAge(), $result->getCacheMaxAge(), 'Block access has the same cache max age as the access of the webform.');
-  }
-
-  /**
-   * Create a mock webform block.
-   *
-   * @param \Drupal\webform\WebformInterface $webform
-   *   A webform.
-   *
-   * @return \Drupal\webform\Plugin\Block\WebformBlock
-   *   A mock webform block.
-   */
-  protected function mockWebformBlock(WebformInterface $webform) {
-    $request_stack = $this->getMockBuilder(RequestStack::class)
-      ->disableOriginalConstructor()
-      ->getMock();
 
     $entity_type_manager = $this->getMockBuilder(EntityTypeManagerInterface::class)
       ->disableOriginalConstructor()
@@ -121,27 +122,35 @@ class WebformBlockTest extends UnitTestCase {
     $storage = $this->getMockBuilder(EntityStorageInterface::class)
       ->disableOriginalConstructor()
       ->getMock();
-    $storage->method('load')
-      ->willReturnMap([
-        [$webform->id(), $webform],
-      ]);
 
     $entity_type_manager->method('getStorage')
       ->willReturnMap([
         ['webform', $storage],
       ]);
 
+    $storage->method('load')
+      ->willReturnMap([
+        [$webform->id(), $webform],
+      ]);
+
     $token_manager = $this->getMockBuilder(WebformTokenManagerInterface::class)
       ->disableOriginalConstructor()
       ->getMock();
 
-    $configuration = ['webform_id' => $webform->id()];
+    $block = new WebformBlock([
+      'webform_id' => $webform->id(),
+      'default_data' => [],
+    ], 'webform_block', [
+      'provider' => 'unit_test',
+    ], $entity_type_manager, $token_manager);
 
-    $plugin_id = 'webform_block';
+    $result = $block->access($account, TRUE);
 
-    $plugin_definition = ['provider' => 'unit_test'];
-
-    return new WebformBlock($configuration, $plugin_id, $plugin_definition, $request_stack, $entity_type_manager, $token_manager);
+    // Make sure the block transparently follows the webform access logic.
+    $this->assertSame($access_result->isAllowed(), $result->isAllowed(), 'Block access yields the same result as the access of the webform.');
+    $this->assertEquals($access_result->getCacheContexts(), $result->getCacheContexts(), 'Block access has the same cache contexts as the access of the webform.');
+    $this->assertEquals($access_result->getCacheTags(), $result->getCacheTags(), 'Block access has the same cache tags as the access of the webform.');
+    $this->assertEquals($access_result->getCacheMaxAge(), $result->getCacheMaxAge(), 'Block access has the same cache max age as the access of the webform.');
   }
 
 }

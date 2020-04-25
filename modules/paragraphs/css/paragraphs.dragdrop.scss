@@ -171,13 +171,18 @@
     width: calc(100% - var(--dnd-icon-size));
   }
 
-  // Closed summary container.
+  // Collapsed summary container.
   .paragraphs-summary-wrapper {
     display: flex;
     align-items: center;
     height: 1.538em;
     margin: 5px 0;
     line-height: 1.538em;
+
+    > .paragraphs-collapsed-description {
+      flex-grow: 1;
+      font-style: italic;
+    }
   }
 }
 

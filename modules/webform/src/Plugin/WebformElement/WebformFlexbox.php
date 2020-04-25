@@ -22,14 +22,12 @@ class WebformFlexbox extends Container {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     return [
       // Flexbox.
       'align_items' => 'flex-start',
-    ] + parent::defineDefaultProperties();
+    ] + parent::getDefaultProperties();
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}

@@ -20,7 +20,7 @@ class WebformAutocomplete extends TextField {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     $properties = [
       // Autocomplete settings.
       'autocomplete_existing' => FALSE,
@@ -28,15 +28,12 @@ class WebformAutocomplete extends TextField {
       'autocomplete_limit' => 10,
       'autocomplete_match' => 3,
       'autocomplete_match_operator' => 'CONTAINS',
-    ] + parent::defineDefaultProperties()
-      + $this->defineDefaultMultipleProperties();
-    // Remove autocomplete property which is not applicable to
-    // this autocomplete element.
+    ] + parent::getDefaultProperties() + $this->getDefaultMultipleProperties();
+    // Remove autocomplete property which is not applicable to this autocomplete
+    // element.
     unset($properties['autocomplete']);
     return $properties;
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}

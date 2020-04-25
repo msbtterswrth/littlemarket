@@ -20,22 +20,13 @@ class WebformSection extends ContainerBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     return [
-      // Description/Help.
       'help' => '',
-      'help_title' => '',
-      'description' => '',
-      'more' => '',
-      'more_title' => '',
-      // Title.
       'title_tag' => \Drupal::config('webform.settings')->get('element.default_section_title_tag'),
       'title_display' => '',
-      'help_display' => '',
-    ] + parent::defineDefaultProperties();
+    ] + parent::getDefaultProperties();
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -64,7 +55,6 @@ class WebformSection extends ContainerBase {
     $form['form']['title_tag'] = [
       '#type' => 'webform_select_other',
       '#title' => $this->t('Title tag'),
-      '#description' => $this->t("The section's title HTML tag."),
       '#options' => [
         'h1' => $this->t('Header 1 (h1)'),
         'h2' => $this->t('Header 2 (h2)'),

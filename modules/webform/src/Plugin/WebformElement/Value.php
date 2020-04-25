@@ -2,8 +2,6 @@
 
 namespace Drupal\webform\Plugin\WebformElement;
 
-use Drupal\webform\WebformInterface;
-
 /**
  * Provides a 'value' element.
  *
@@ -20,7 +18,7 @@ class Value extends TextBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     return [
       // Element settings.
       'title' => '',
@@ -28,25 +26,18 @@ class Value extends TextBase {
     ];
   }
 
-  /****************************************************************************/
-
   /**
    * {@inheritdoc}
    */
   public function preview() {
-    return [
-      '#type' => 'value',
-      '#title' => $this->t('Value'),
-      '#value' => 'preview',
-    ];
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getTestValues(array $element, WebformInterface $webform, array $options = []) {
-    // Value elements should never get a test value.
-    return NULL;
+  public function getElementSelectorOptions(array $element) {
+    return [];
   }
 
 }

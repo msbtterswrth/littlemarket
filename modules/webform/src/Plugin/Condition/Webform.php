@@ -90,10 +90,9 @@ class Webform extends ConditionPluginBase implements ContainerFactoryPluginInter
       '#type' => 'select',
       '#options' => $options,
       '#multiple' => $options,
-      '#select2' => TRUE,
       '#default_value' => $this->configuration['webforms'],
     ];
-    WebformElementHelper::process($form['webforms']);
+    WebformElementHelper::enhanceSelect($form['webforms'], TRUE);
 
     if (empty($this->configuration['context_mapping'])) {
       $form['message'] = [
@@ -131,9 +130,7 @@ class Webform extends ConditionPluginBase implements ContainerFactoryPluginInter
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $values = $form_state->getValue('webforms') ?: [];
-    $values = array_filter($values);
-    $this->configuration['webforms'] = array_combine($values, $values);
+    $this->configuration['webforms'] = array_filter($form_state->getValue('webforms'));
     parent::submitConfigurationForm($form, $form_state);
   }
 

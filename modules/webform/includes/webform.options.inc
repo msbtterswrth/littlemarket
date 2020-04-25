@@ -73,16 +73,3 @@ function webform_webform_options_languages_alter(array &$options, array $element
     }
   }
 }
-
-/**
- * Implements hook_webform_options_WEBFORM_OPTIONS_ID_alter().
- */
-function webform_webform_options_translations_alter(array &$options, array $element = []) {
-  if (empty($options)) {
-    $languages = \Drupal::languageManager()->getLanguages();
-    $options = [];
-    foreach ($languages as $language) {
-      $options[$language->getId()] = $language->getName();
-    }
-  }
-}

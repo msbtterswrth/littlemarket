@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\paragraphs\Kernel;
 
+use Drupal\Core\Entity\Entity;
 use Drupal\Core\Site\Settings;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;

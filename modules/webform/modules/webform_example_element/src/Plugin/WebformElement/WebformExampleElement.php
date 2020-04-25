@@ -26,22 +26,20 @@ class WebformExampleElement extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     // Here you define your webform element's default properties,
     // which can be inherited.
     //
-    // @see \Drupal\webform\Plugin\WebformElementBase::defaultProperties
-    // @see \Drupal\webform\Plugin\WebformElementBase::defaultBaseProperties
-    return [
+    // @see \Drupal\webform\Plugin\WebformElementBase::getDefaultProperties
+    // @see \Drupal\webform\Plugin\WebformElementBase::getDefaultBaseProperties
+    return parent::getDefaultProperties() + [
       'multiple' => '',
       'size' => '',
       'minlength' => '',
       'maxlength' => '',
       'placeholder' => '',
-    ] + parent::defineDefaultProperties();
+    ];
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -56,6 +54,7 @@ class WebformExampleElement extends WebformElementBase {
     // @see \Drupal\webform_example_element\Element\WebformExampleElement::processWebformElementExample
   }
 
+
   /**
    * {@inheritdoc}
    */
@@ -63,7 +62,7 @@ class WebformExampleElement extends WebformElementBase {
     $form = parent::form($form, $form_state);
     // Here you can define and alter a webform element's properties UI.
     // Form element property visibility and default values are defined via
-    // ::defaultProperties.
+    // ::getDefaultProperties.
     //
     // @see \Drupal\webform\Plugin\WebformElementBase::form
     // @see \Drupal\webform\Plugin\WebformElement\TextBase::form

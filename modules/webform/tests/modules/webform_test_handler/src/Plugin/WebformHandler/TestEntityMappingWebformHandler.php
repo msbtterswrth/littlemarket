@@ -74,10 +74,7 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
       }
     }
 
-    $form['entity_type_container'] = [
-      '#type' => 'container',
-    ];
-    $form['entity_type_container']['entity_type'] = [
+    $form['entity_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Entity type'),
       '#default_value' => $this->configuration['entity_type'],
@@ -109,15 +106,16 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
       $access = TRUE;
     }
 
-    $form['bundle_container'] = [
+    $form['container'] = [
       '#type' => 'container',
       '#attributes' => ['id' => 'webform-test-ajax-container'],
     ];
 
     $this->configuration['bundle'] = isset($bundle_options[$this->configuration['bundle']]) ? $this->configuration['bundle'] : reset(array_keys($bundle_options));
-    $form['bundle_container']['bundle'] = [
+    $form['container']['bundle'] = [
       '#type' => 'select',
       '#title' => $this->t('Bundles'),
+      '#parents' => ['settings', 'bundle'],
       '#default_value' => $this->configuration['bundle'],
       '#options' => $bundle_options,
       '#ajax' => $ajax,
@@ -142,18 +140,19 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
       $field_options[$field_name] = $field->getLabel();
     }
 
-    $form['bundle_container']['fields'] = [
+    $form['container']['fields'] = [
       '#type' => 'webform_mapping',
       '#title' => 'Fields',
       '#description' => $this->t('Please select which fields webform submission data should be mapped to'),
       '#description_display' => 'before',
       '#default_value' => $this->configuration['fields'],
       '#required' => TRUE,
+      '#parents' => ['settings', 'fields'],
       '#source' => $element_options,
       '#destination' => $field_options,
     ];
 
-    return $this->setSettingsParents($form);
+    return $form;
   }
 
   /**
@@ -178,7 +177,7 @@ class TestEntityMappingWebformHandler extends WebformHandlerBase {
    *   An associative array containing entity reference details element.
    */
   public function ajaxCallback(array $form, FormStateInterface $form_state) {
-    return NestedArray::getValue($form, ['settings', 'bundle_container']);
+    return NestedArray::getValue($form, ['settings', 'container']);
   }
 
 }

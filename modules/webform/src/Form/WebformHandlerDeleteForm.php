@@ -2,13 +2,16 @@
 
 namespace Drupal\webform\Form;
 
+use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\WebformInterface;
 
 /**
  * Form for deleting a webform handler.
  */
-class WebformHandlerDeleteForm extends WebformDeleteFormBase {
+class WebformHandlerDeleteForm extends ConfirmFormBase {
+
+  use WebformDialogFormTrait;
 
   /**
    * The webform containing the webform handler to be deleted.
@@ -28,55 +31,15 @@ class WebformHandlerDeleteForm extends WebformDeleteFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    if ($this->isDialog()) {
-      $t_args = [
-        '@title' => $this->webformHandler->label(),
-      ];
-      return $this->t("Delete the '@title' handler?", $t_args);
-    }
-    else {
-      $t_args = [
-        '%webform' => $this->webform->label(),
-        '%title' => $this->webformHandler->label(),
-      ];
-      return $this->t('Delete the %title handler from the %webform webform?', $t_args);
-    }
+    return $this->t('Are you sure you want to delete the @handler handler from the %webform webform?', ['%webform' => $this->webform->label(), '@handler' => $this->webformHandler->label()]);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getWarning() {
-    $t_args = ['%title' => $this->webformHandler->label()];
-    return [
-      '#type' => 'webform_message',
-      '#message_type' => 'warning',
-      '#message_message' => $this->t('Are you sure you want to delete the %title handler?', $t_args) . '<br/>' .
-        '<strong>' . $this->t('This action cannot be undone.') . '</strong>',
-    ];
+  public function getConfirmText() {
+    return $this->t('Delete');
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getDescription() {
-    return [
-      'title' => [
-        '#markup' => $this->t('This action will…'),
-      ],
-      'list' => [
-        '#theme' => 'item_list',
-        '#items' => [
-          $this->t('Remove this handler'),
-          $this->t('Cancel all pending actions'),
-        ],
-      ],
-    ];
-  }
-
-  /****************************************************************************/
-  // Form methods.
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -99,7 +62,9 @@ class WebformHandlerDeleteForm extends WebformDeleteFormBase {
     $this->webform = $webform;
     $this->webformHandler = $this->webform->getHandler($webform_handler);
 
-    return parent::buildForm($form, $form_state);
+    $form = parent::buildForm($form, $form_state);
+    $this->buildDialogConfirmForm($form, $form_state);
+    return $form;
   }
 
   /**
@@ -107,7 +72,7 @@ class WebformHandlerDeleteForm extends WebformDeleteFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->webform->deleteWebformHandler($this->webformHandler);
-    $this->messenger()->addStatus($this->t('The webform handler %name has been deleted.', ['%name' => $this->webformHandler->label()]));
+    drupal_set_message($this->t('The webform handler %name has been deleted.', ['%name' => $this->webformHandler->label()]));
     $form_state->setRedirectUrl($this->webform->toUrl('handlers'));
   }
 

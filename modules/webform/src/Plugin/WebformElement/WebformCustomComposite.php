@@ -3,6 +3,7 @@
 namespace Drupal\webform\Plugin\WebformElement;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionInterface;
 
 /**
@@ -23,26 +24,22 @@ class WebformCustomComposite extends WebformCompositeBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
-    $properties = [
-      'title_display' => '',
-      'element' => [],
-    ] + $this->defineDefaultMultipleProperties()
-      + parent::defineDefaultProperties();
+  public function getDefaultProperties() {
+    $properties = $this->getDefaultMultipleProperties() + parent::getDefaultProperties();
+    $properties['title_display'] = '';
+    $properties['element'] = [];
     unset($properties['flexbox']);
     return $properties;
   }
 
-  /****************************************************************************/
-
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultMultipleProperties() {
+  protected function getDefaultMultipleProperties() {
     $properties = [
       'multiple' => TRUE,
       'multiple__header' => TRUE,
-    ] + parent::defineDefaultMultipleProperties();
+    ] + parent::getDefaultMultipleProperties();
     return $properties;
 
   }
@@ -68,7 +65,7 @@ class WebformCustomComposite extends WebformCompositeBase {
     }
 
     // Apply multiple properties.
-    $multiple_properties = $this->defineDefaultMultipleProperties();
+    $multiple_properties = $this->getDefaultMultipleProperties();
     foreach ($multiple_properties as $multiple_property => $multiple_value) {
       if (strpos($multiple_property, 'multiple__') === 0) {
         $property_name = str_replace('multiple__', '', $multiple_property);
@@ -119,11 +116,11 @@ class WebformCustomComposite extends WebformCompositeBase {
   /**
    * {@inheritdoc}
    */
-  protected function buildCompositeElementsTable(array $form, FormStateInterface $form_state) {
+  protected function buildCompositeElementsTable() {
     return [
       '#type' => 'webform_element_composite',
       '#title' => $this->t('Elements'),
-      '#title_display' => 'invisible',
+      '#title_display' => $this->t('Invisible'),
     ];
   }
 
@@ -158,6 +155,37 @@ class WebformCustomComposite extends WebformCompositeBase {
   }
 
   /****************************************************************************/
+  // Test methods.
+  /****************************************************************************/
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTestValues(array $element, WebformInterface $webform, array $options = []) {
+    /** @var \Drupal\webform\WebformSubmissionGenerateInterface $generate */
+    $generate = \Drupal::service('webform_submission.generate');
+
+    $composite_elements = $element['#element'];
+
+    // Initialize, prepare, and populate composite sub-element.
+    foreach ($composite_elements as $composite_key => $composite_element) {
+      $element_plugin = $this->elementManager->getElementInstance($composite_element);
+      $element_plugin->initialize($composite_element);
+      $composite_elements[$composite_key] = $composite_element;
+    }
+
+    $values = [];
+    for ($i = 1; $i <= 3; $i++) {
+      $value = [];
+      foreach ($composite_elements as $composite_key => $composite_element) {
+        $value[$composite_key] = $generate->getTestValue($webform, $composite_key, $composite_element, $options);
+      }
+      $values[] = $value;
+    }
+    return $values;
+  }
+
+  /****************************************************************************/
   // Composite element methods.
   /****************************************************************************/
 
@@ -166,11 +194,14 @@ class WebformCustomComposite extends WebformCompositeBase {
    */
   public function initializeCompositeElements(array &$element) {
     $element['#webform_composite_elements'] = [];
+    /** @var \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager */
+    $element_manager = \Drupal::service('plugin.manager.webform.element');
     foreach ($element['#element'] as $composite_key => $composite_element) {
-      $this->elementManager->initializeElement($composite_element);
+      // Initialize, prepare, and populate composite sub-element.
+      $element_plugin = $element_manager->getElementInstance($composite_element);
+      $element_plugin->initialize($composite_element);
       $element['#webform_composite_elements'][$composite_key] = $composite_element;
     }
-    $this->initializeCompositeElementsRecursive($element, $element['#webform_composite_elements']);
   }
 
   /**

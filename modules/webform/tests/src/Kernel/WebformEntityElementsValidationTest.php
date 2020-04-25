@@ -64,15 +64,6 @@ class WebformEntityElementsValidationTest extends KernelTestBase {
         ],
       ],
 
-      // Check names.
-      [
-        'getElementsRaw' => "Not Valid:
-  '#type': textfield",
-        'messages' => [
-          'The element key <em class="placeholder">Not Valid</em> on line 1 must contain only lowercase letters, numbers, and underscores.',
-        ],
-      ],
-
       // Check duplicate names.
       [
         'getElementsRaw' => "name:
@@ -94,18 +85,6 @@ duplicate:
     '#type': textfield",
         'messages' => [
           'Elements contain a duplicate element key <em class="placeholder">name</em> found on lines 1 and 4.',
-        ],
-      ],
-
-      // Check reserved names.
-      [
-        'getElementsRaw' => "name:
-  '#type': textfield
-duplicate:
-  add:
-    '#type': textfield",
-        'messages' => [
-          'The element key <em class="placeholder">add</em> on line 4 is a reserved key.',
         ],
       ],
 
@@ -210,7 +189,7 @@ duplicate:
       ];
 
       /** @var \Drupal\webform\WebformInterface $webform */
-      $webform = $this->createMock('\Drupal\webform\WebformInterface');
+      $webform = $this->getMock('\Drupal\webform\WebformInterface');
       $methods = $test;
       unset($methods['messages']);
       foreach ($methods as $method => $returnValue) {

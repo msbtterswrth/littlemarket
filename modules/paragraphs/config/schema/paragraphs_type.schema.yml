@@ -11,9 +11,6 @@ paragraphs.paragraphs_type.*:
     icon_uuid:
       type: string
       label: 'Icon uuid'
-    icon_default:
-      type: string
-      label: 'Default icon'
     description:
       type: text
       label: 'Description'
@@ -56,9 +53,9 @@ entity_reference_selection.default:paragraph:
     edit_mode:
       type: string
     title:
-      type: label
+      type: string
     title_plural:
-      type: label
+      type: string
     default_paragraph_type:
       type: string
 
@@ -66,9 +63,9 @@ field.widget.settings.entity_reference_paragraphs:
   type: mapping
   mapping:
     title:
-      type: label
+      type: string
     title_plural:
-      type: label
+      type: string
     edit_mode:
       type: string
     add_mode:
@@ -82,9 +79,9 @@ field.widget.settings.paragraphs:
   type: mapping
   mapping:
     title:
-      type: label
+      type: string
     title_plural:
-      type: label
+      type: string
     edit_mode:
       type: string
     closed_mode:

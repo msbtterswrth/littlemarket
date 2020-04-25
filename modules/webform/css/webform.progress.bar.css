@@ -12,21 +12,21 @@
  * @see https://coderwall.com/p/-7trcg/simple-css-only-wizard-progress-tracker
  */
 .webform-progress-bar {
-  overflow: hidden;
   margin: 0;
   padding: 0;
+  overflow: hidden;
   font-size: smaller;
 }
 
 li.webform-progress-bar__page {
-  position: relative;
+  list-style-type: none;
   display: inline-block;
-  height: 30px;
+  position: relative;
   margin: 0;
   padding: 0;
-  list-style-type: none;
-  background-color: #f0f0f0;
   line-height: 30px;
+  height: 30px;
+  background-color: #f0f0f0;
 }
 
 .webform-progress-bar[data-steps="2"] li {
@@ -59,11 +59,11 @@ li.webform-progress-bar__page {
 
 li.webform-progress-bar__page > b {
   display: block;
-  overflow: hidden;
   padding: 0 0 0 30px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
   font-weight: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 li.webform-progress-bar__page--done > b {
@@ -76,23 +76,23 @@ li.webform-progress-bar__page--current > b {
 
 li.webform-progress-bar__page > b:after,
 li.webform-progress-bar__page > b:before {
-  position: absolute;
-  top: 0;
-  left: 0;
+  content: "";
   display: block;
   width: 0;
   height: 0;
-  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
   border: solid transparent;
-  border-width: 15px;
   border-left-color: #ededed;
+  border-width: 15px;
 }
 
 li.webform-progress-bar__page > b:after {
-  z-index: 1;
   top: -5px;
-  border-width: 20px;
+  z-index: 1;
   border-left-color: white;
+  border-width: 20px;
 }
 
 li.webform-progress-bar__page > b:before {
@@ -110,21 +110,21 @@ li:first-child > b:before {
 
 li.webform-progress-bar__page:first-child span,
 li.webform-progress-bar__page:last-child span {
+  display: block;
+  height: 0;
+  width: 0;
   position: absolute;
   top: 0;
   left: 0;
-  display: block;
-  width: 0;
-  height: 0;
   border: solid transparent;
-  border-width: 15px;
   border-left-color: white;
+  border-width: 15px;
 }
 
 li.webform-progress-bar__page:last-child span {
-  right: -15px;
   left: auto;
+  right: -15px;
+  border-left-color: transparent;
   border-top-color: white;
   border-bottom-color: white;
-  border-left-color: transparent;
 }

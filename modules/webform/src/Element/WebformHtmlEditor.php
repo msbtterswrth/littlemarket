@@ -6,7 +6,6 @@ use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\webform\Utility\WebformElementHelper;
-use Drupal\webform\Utility\WebformXss;
 
 /**
  * Provides a webform element for entering HTML using CodeMirror, TextFormat, or custom CKEditor.
@@ -70,20 +69,25 @@ class WebformHtmlEditor extends FormElement {
     // Define value element.
     $element += ['value' => []];
 
-    // Copy properties to value element.
-    $properties = ['#title', '#required', '#attributes', '#default_value'];
-    $element['value'] += array_intersect_key($element, array_combine($properties, $properties));
-
-    // Hide title.
+    // Set value element title and hide it.
+    $element['value']['#title'] = $element['#title'];
     $element['value']['#title_display'] = 'invisible';
+
+    // Set value element required.
+    if (isset($element['#required'])) {
+      $element['value']['#required'] = $element['#required'];
+    }
 
     // Don't display inline form error messages.
     $element['#error_no_message'] = TRUE;
 
+    // Set value element default value.
+    $element['value']['#default_value'] = $element['#default_value'];
+
     // Add validate callback.
     $element += ['#element_validate' => []];
     array_unshift($element['#element_validate'], [get_called_class(), 'validateWebformHtmlEditor']);
-
+    
     // If HTML disabled and no #format is specified return simple CodeMirror
     // HTML editor.
     $disabled = \Drupal::config('webform.settings')->get('html_editor.disabled') ?: ($element['#format'] === FALSE);
@@ -95,9 +99,9 @@ class WebformHtmlEditor extends FormElement {
       return $element;
     }
 
-    // If #format or 'webform.settings.html_editor.element_format' is defined return
+    // If #format or 'webform.settings.html_editor.format' is defined return
     // a 'text_format' element.
-    $format = $element['#format'] ?: \Drupal::config('webform.settings')->get('html_editor.element_format');
+    $format = $element['#format'] ?: \Drupal::config('webform.settings')->get('html_editor.format');
     if ($format) {
       $element['value'] += [
         '#type' => 'text_format',
@@ -111,8 +115,8 @@ class WebformHtmlEditor extends FormElement {
     // Else use textarea with completely custom HTML Editor.
     $element['value'] += [
       '#type' => 'textarea',
+      '#attributes' => ['class' => ['js-html-editor']],
     ];
-    $element['value']['#attributes']['class'][] = 'js-html-editor';
 
     $element['#attached']['library'][] = 'webform/webform.element.html_editor';
     $element['#attached']['drupalSettings']['webform']['html_editor']['allowedContent'] = static::getAllowedContent();
@@ -203,10 +207,18 @@ class WebformHtmlEditor extends FormElement {
     $allowed_tags = \Drupal::config('webform.settings')->get('element.allowed_tags');
     switch ($allowed_tags) {
       case 'admin':
-        return WebformXss::getAdminTagList();
+        $allowed_tags = Xss::getAdminTagList();
+        // <label>, <fieldset>, <legend>, <font> is missing from allowed tags.
+        $allowed_tags[] = 'label';
+        $allowed_tags[] = 'fieldset';
+        $allowed_tags[] = 'legend';
+        $allowed_tags[] = 'font';
+        return $allowed_tags;
 
       case 'html':
-        return WebformXss::getHtmlTagList();
+        $allowed_tags = Xss::getHtmlTagList();
+        $allowed_tags[] = 'font';
+        return $allowed_tags;
 
       default:
         return preg_split('/ +/', $allowed_tags);
@@ -218,28 +230,23 @@ class WebformHtmlEditor extends FormElement {
    *
    * @param string $text
    *   The text to be filtered.
-   * @param array $options
-   *   HTML markup options.
    *
    * @return array
    *   Render array containing 'processed_text'.
    *
    * @see \Drupal\webform\Plugin\WebformHandler\EmailWebformHandler::getMessage
    */
-  public static function checkMarkup($text, array $options = []) {
-    $options += [
-      'tidy' => \Drupal::config('webform.settings')->get('html_editor.tidy'),
-    ];
+  public static function checkMarkup($text) {
     // Remove <p> tags around a single line of text, which creates minor
     // margin issues.
-    if ($options['tidy']) {
+    if (\Drupal::config('webform.settings')->get('html_editor.tidy')) {
       if (substr_count($text, '<p>') === 1 && preg_match('#^\s*<p>.*</p>\s*$#m', $text)) {
         $text = preg_replace('#^\s*<p>#', '', $text);
         $text = preg_replace('#</p>\s*$#', '', $text);
       }
     }
 
-    if ($format = \Drupal::config('webform.settings')->get('html_editor.element_format')) {
+    if ($format = \Drupal::config('webform.settings')->get('html_editor.format')) {
       return [
         '#type' => 'processed_text',
         '#text' => $text,
@@ -248,7 +255,6 @@ class WebformHtmlEditor extends FormElement {
     }
     else {
       return [
-        '#theme' => 'webform_html_editor_markup',
         '#markup' => $text,
         '#allowed_tags' => static::getAllowedTags(),
       ];

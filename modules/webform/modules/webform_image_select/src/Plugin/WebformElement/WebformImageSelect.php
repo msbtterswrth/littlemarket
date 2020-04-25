@@ -24,17 +24,8 @@ class WebformImageSelect extends Select {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
-    $properties = [
-      'images' => [],
-      'images_randomize' => FALSE,
-      'show_label' => FALSE,
-      'filter' => FALSE,
-      'filter__placeholder' => (string) $this->t('Filter images by label'),
-      'filter__singlular' => (string) $this->t('image'),
-      'filter__plural' => (string) $this->t('images'),
-      'filter__no_results' => (string) $this->t('No images found.'),
-    ] + parent::defineDefaultProperties();
+  public function getDefaultProperties() {
+    $properties = parent::getDefaultProperties();
     unset(
       $properties['options'],
       $properties['options_randomize'],
@@ -43,30 +34,28 @@ class WebformImageSelect extends Select {
       $properties['disabled'],
       $properties['select2']
     );
+
+    $properties['images'] = [];
+    $properties['images_randomize'] = FALSE;
+    $properties['show_label'] = FALSE;
     return $properties;
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function defineTranslatableProperties() {
-    return array_merge(parent::defineTranslatableProperties(), [
-      'images',
-      'filter__placeholder',
-      'filter__singlular',
-      'filter__plural',
-      'filter__no_results',
-    ]);
+  public function getTranslatableProperties() {
+    return array_merge(parent::getTranslatableProperties(), ['images']);
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}
    */
   public function initialize(array &$element) {
     // Set element images.
-    $element['#images'] = WebformImageSelectImages::getElementImages($element);
+    if (isset($element['#images'])) {
+      $element['#images'] = WebformImageSelectImages::getElementImages($element);
+    }
 
     WebformImageSelectElement::setOptions($element);
 
@@ -238,41 +227,6 @@ class WebformImageSelect extends Select {
       '#title' => $this->t('Show labels'),
       '#description' => $this->t('If checked, the image text will be displayed below each image.'),
       '#return_value' => TRUE,
-    ];
-    $form['options']['filter'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Include filter by label'),
-      '#description' => $this->t('If checked, users will be able search/filter images by their labels.'),
-      '#return_value' => TRUE,
-      '#states' => [
-        'visible' => [
-          ':input[name="properties[show_label]"]' => ['checked' => TRUE],
-        ],
-      ],
-    ];
-    $form['options']['filter_container'] = [
-      '#type' => 'container',
-      '#states' => [
-        'visible' => [
-          ':input[name="properties[filter]"]' => ['checked' => TRUE],
-        ],
-      ],
-    ];
-    $form['options']['filter_container']['filter__placeholder'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Filter placeholder label'),
-    ];
-    $form['options']['filter_container']['filter__singlular'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Filter single item label'),
-    ];
-    $form['options']['filter_container']['filter__plural'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Filter plural items label'),
-    ];
-    $form['options']['filter_container']['filter__no_results'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Filter no results label'),
     ];
     return $form;
   }

@@ -18,17 +18,14 @@ class Number extends NumericBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     return [
       // Number settings.
-      'min' => NULL,
-      'max' => NULL,
-      'step' => NULL,
-    ] + parent::defineDefaultProperties()
-      + $this->defineDefaultMultipleProperties();
+      'min' => '',
+      'max' => '',
+      'step' => '',
+    ] + parent::getDefaultProperties() + $this->getDefaultMultipleProperties();
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}

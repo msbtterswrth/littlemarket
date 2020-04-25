@@ -10,18 +10,11 @@ use Drupal\Core\Entity\ContentEntityDeleteForm;
 class EntitySubqueueDeleteForm extends ContentEntityDeleteForm {
 
   /**
-   * The entity being used by this form.
-   *
-   * @var \Drupal\entityqueue\EntitySubqueueInterface
-   */
-  protected $entity;
-
-  /**
    * {@inheritdoc}
    */
   public function getCancelUrl() {
     // Point to the parent queue entity.
-    return $this->entity->getQueue()->toUrl('subqueue-list');
+    return $this->entity->queue->entity->urlInfo('subqueue-list');
   }
 
   /**

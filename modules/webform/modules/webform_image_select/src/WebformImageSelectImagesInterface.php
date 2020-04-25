@@ -34,7 +34,7 @@ interface WebformImageSelectImagesInterface extends ConfigEntityInterface {
    *   A webform image select element.
    *
    * @return array
-   *   An associative array of images.
+   *   An associative array of iamge.
    */
   public static function getElementImages(array &$element);
 

@@ -111,31 +111,22 @@ class WebformElementMultiple extends FormElement {
    * Validates element multiple.
    */
   public static function validateWebformElementMultiple(&$element, FormStateInterface $form_state, &$complete_form) {
-    $has_access = (!isset($element['#access']) || $element['#access'] === TRUE);
-    $is_disabled = (!empty($element['#disabled']));
-
-    if (!$has_access) {
-      $multiple = $element['#value'];
-    }
-    elseif ($is_disabled) {
+    if (!empty($element['#disabled'])) {
       $multiple = $element['#default_value'];
     }
     else {
       $cardinality = $element['#value']['container']['cardinality'];
       $cardinality_number = (int) $element['#value']['container']['cardinality_number'];
+
       if ($cardinality == WebformMultiple::CARDINALITY_UNLIMITED) {
-        $multiple = WebformMultiple::CARDINALITY_UNLIMITED;
+        $multiple = TRUE;
+      }
+      elseif ($cardinality_number === 1) {
+        $multiple = FALSE;
       }
       else {
         $multiple = $cardinality_number;
       }
-    }
-
-    if ($multiple == WebformMultiple::CARDINALITY_UNLIMITED) {
-      $multiple = TRUE;
-    }
-    elseif ($multiple === 1) {
-      $multiple = FALSE;
     }
 
     $form_state->setValueForElement($element['container']['cardinality'], NULL);

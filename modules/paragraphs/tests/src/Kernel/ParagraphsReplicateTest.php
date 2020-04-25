@@ -3,6 +3,7 @@
 namespace Drupal\Tests\paragraphs\Kernel;
 
 use Drupal\Core\Entity\Entity;
+use Drupal\Core\Site\Settings;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\Node;
@@ -10,6 +11,7 @@ use Drupal\node\Entity\NodeType;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\paragraphs\Entity\ParagraphsType;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\user\Entity\User;
 
 /**
  * Tests the replication functionality provided by Replicate module.

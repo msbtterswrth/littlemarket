@@ -6,6 +6,8 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface;
+use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -13,9 +15,12 @@ use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Render\Element;
+use Drupal\node\Entity\Node;
+use Drupal\paragraphs;
 use Drupal\paragraphs\ParagraphInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Drupal\paragraphs\Plugin\EntityReferenceSelection\ParagraphSelection;
+
 
 /**
  * Plugin implementation of the 'entity_reference paragraphs' widget.
@@ -230,7 +235,7 @@ class InlineParagraphsWidget extends WidgetBase {
     $host = $items->getEntity();
     $widget_state = static::getWidgetState($parents, $field_name, $form_state);
 
-    $entity_type_manager = \Drupal::entityTypeManager();
+    $entity_manager = \Drupal::entityTypeManager();
     $target_type = $this->getFieldSetting('target_type');
 
     $item_mode = isset($widget_state['paragraphs'][$delta]['mode']) ? $widget_state['paragraphs'][$delta]['mode'] : 'edit';
@@ -260,10 +265,10 @@ class InlineParagraphsWidget extends WidgetBase {
     }
     elseif (isset($widget_state['selected_bundle'])) {
 
-      $entity_type = $entity_type_manager->getDefinition($target_type);
+      $entity_type = $entity_manager->getDefinition($target_type);
       $bundle_key = $entity_type->getKey('bundle');
 
-      $paragraphs_entity = $entity_type_manager->getStorage($target_type)->create(array(
+      $paragraphs_entity = $entity_manager->getStorage($target_type)->create(array(
         $bundle_key => $widget_state['selected_bundle'],
       ));
       $paragraphs_entity->setParentEntity($items->getEntity(), $field_name);
@@ -396,10 +401,8 @@ class InlineParagraphsWidget extends WidgetBase {
         $actions = array();
         $links = array();
 
-        // Avoid checking delete access for new entities.
-        $delete_access = $paragraphs_entity->isNew() || $paragraphs_entity->access('delete');
         // Hide the button when translating.
-        $button_access = $delete_access && !$this->isTranslating;
+        $button_access = $paragraphs_entity->access('delete') && !$this->isTranslating;
         if ($item_mode != 'remove') {
           $links['remove_button'] = [
             '#type' => 'submit',
@@ -415,7 +418,7 @@ class InlineParagraphsWidget extends WidgetBase {
               'effect' => 'fade',
             ],
             '#access' => $button_access,
-            '#prefix' => '<li class="remove dropbutton__item  dropbutton__item--extrasmall">',
+            '#prefix' => '<li class="remove">',
             '#suffix' => '</li>',
             '#paragraphs_mode' => 'remove',
           ];
@@ -439,7 +442,7 @@ class InlineParagraphsWidget extends WidgetBase {
                 'effect' => 'fade',
               ),
               '#access' => $paragraphs_entity->access('update'),
-              '#prefix' => '<li class="collapse dropbutton__item  dropbutton__item--extrasmall">',
+              '#prefix' => '<li class="collapse">',
               '#suffix' => '</li>',
               '#paragraphs_mode' => 'collapsed',
               '#paragraphs_show_warning' => TRUE,
@@ -450,21 +453,21 @@ class InlineParagraphsWidget extends WidgetBase {
             '#type' => 'container',
             '#markup' => $this->t('You are not allowed to edit this @title.', array('@title' => $this->getSetting('title'))),
             '#attributes' => ['class' => ['messages', 'messages--warning']],
-            '#access' => !$paragraphs_entity->access('update') && $delete_access,
+            '#access' => !$paragraphs_entity->access('update') && $paragraphs_entity->access('delete'),
           );
 
           $info['remove_button_info'] = array(
             '#type' => 'container',
             '#markup' => $this->t('You are not allowed to remove this @title.', array('@title' => $this->getSetting('title'))),
             '#attributes' => ['class' => ['messages', 'messages--warning']],
-            '#access' => !$delete_access && $paragraphs_entity->access('update'),
+            '#access' => !$paragraphs_entity->access('delete') && $paragraphs_entity->access('update'),
           );
 
           $info['edit_remove_button_info'] = array(
             '#type' => 'container',
             '#markup' => $this->t('You are not allowed to edit or remove this @title.', array('@title' => $this->getSetting('title'))),
             '#attributes' => ['class' => ['messages', 'messages--warning']],
-            '#access' => !$paragraphs_entity->access('update') && !$delete_access,
+            '#access' => !$paragraphs_entity->access('update') && !$paragraphs_entity->access('delete'),
           );
         }
         elseif ($item_mode == 'preview' || $item_mode == 'closed') {
@@ -482,7 +485,7 @@ class InlineParagraphsWidget extends WidgetBase {
               'effect' => 'fade',
             ),
             '#access' => $paragraphs_entity->access('update'),
-            '#prefix' => '<li class="edit dropbutton__item  dropbutton__item--extrasmall">',
+            '#prefix' => '<li class="edit">',
             '#suffix' => '</li>',
             '#paragraphs_mode' => 'edit',
           );
@@ -506,21 +509,21 @@ class InlineParagraphsWidget extends WidgetBase {
             '#type' => 'container',
             '#markup' => $this->t('You are not allowed to edit this @title.', array('@title' => $this->getSetting('title'))),
             '#attributes' => ['class' => ['messages', 'messages--warning']],
-            '#access' => !$paragraphs_entity->access('update') && $delete_access,
+            '#access' => !$paragraphs_entity->access('update') && $paragraphs_entity->access('delete'),
           );
 
           $info['remove_button_info'] = array(
             '#type' => 'container',
             '#markup' => $this->t('You are not allowed to remove this @title.', array('@title' => $this->getSetting('title'))),
             '#attributes' => ['class' => ['messages', 'messages--warning']],
-            '#access' => !$delete_access && $paragraphs_entity->access('update'),
+            '#access' => !$paragraphs_entity->access('delete') && $paragraphs_entity->access('update'),
           );
 
           $info['edit_remove_button_info'] = array(
             '#type' => 'container',
             '#markup' => $this->t('You are not allowed to edit or remove this @title.', array('@title' => $this->getSetting('title'))),
             '#attributes' => ['class' => ['messages', 'messages--warning']],
-            '#access' => !$paragraphs_entity->access('update') && !$delete_access,
+            '#access' => !$paragraphs_entity->access('update') && !$paragraphs_entity->access('delete'),
           );
         }
         elseif ($item_mode == 'remove') {
@@ -542,7 +545,7 @@ class InlineParagraphsWidget extends WidgetBase {
               'wrapper' => $widget_state['ajax_wrapper_id'],
               'effect' => 'fade',
             ],
-            '#prefix' => '<li class="confirm-remove dropbutton__item  dropbutton__item--extrasmall">',
+            '#prefix' => '<li class="confirm-remove">',
             '#suffix' => '</li>',
             '#paragraphs_mode' => 'removed',
           ];
@@ -560,13 +563,13 @@ class InlineParagraphsWidget extends WidgetBase {
               'wrapper' => $widget_state['ajax_wrapper_id'],
               'effect' => 'fade',
             ],
-            '#prefix' => '<li class="restore dropbutton__item  dropbutton__item--extrasmall">',
+            '#prefix' => '<li class="restore">',
             '#suffix' => '</li>',
             '#paragraphs_mode' => 'edit',
           ];
         }
 
-        if (!empty($links)) {
+        if (count($links)) {
           $show_links = 0;
           foreach($links as $link_item) {
             if (!isset($link_item['#access']) || $link_item['#access']) {
@@ -580,7 +583,7 @@ class InlineParagraphsWidget extends WidgetBase {
             if ($show_links > 1) {
               $element['top']['links']['#theme_wrappers'] = array('dropbutton_wrapper', 'paragraphs_dropbutton_wrapper');
               $element['top']['links']['prefix'] = array(
-                '#markup' => '<ul class="dropbutton dropbutton--multiple dropbutton--extrasmall">',
+                '#markup' => '<ul class="dropbutton">',
                 '#weight' => -999,
               );
               $element['top']['links']['suffix'] = array(
@@ -599,7 +602,7 @@ class InlineParagraphsWidget extends WidgetBase {
           }
         }
 
-        if (!empty($info)) {
+        if (count($info)) {
           $show_info = FALSE;
           foreach($info as $info_item) {
             if (!isset($info_item['#access']) || $info_item['#access']) {
@@ -614,7 +617,7 @@ class InlineParagraphsWidget extends WidgetBase {
           }
         }
 
-        if (!empty($actions)) {
+        if (count($actions)) {
           $show_actions = FALSE;
           foreach($actions as $action_item) {
             if (!isset($action_item['#access']) || $action_item['#access']) {
@@ -645,12 +648,7 @@ class InlineParagraphsWidget extends WidgetBase {
         ];
 
         field_group_attach_groups($element['subform'], $context);
-        if (function_exists('field_group_form_pre_render')) {
-          $element['subform']['#pre_render'][] = 'field_group_form_pre_render';
-        }
-        if (function_exists('field_group_form_process')) {
-          $element['subform']['#process'][] = 'field_group_form_process';
-        }
+        $element['subform']['#pre_render'][] = 'field_group_form_pre_render';
       }
 
       if ($item_mode == 'edit') {
@@ -692,19 +690,20 @@ class InlineParagraphsWidget extends WidgetBase {
         }
       }
       elseif ($item_mode == 'preview') {
-        $view_builder = $entity_type_manager->getViewBuilder($paragraphs_entity->getEntityTypeId());
         $element['subform'] = array();
         $element['behavior_plugins'] = [];
-        $element['preview'] = $view_builder->view($paragraphs_entity, 'preview', $paragraphs_entity->language()->getId());
+        $element['preview'] = entity_view($paragraphs_entity, 'preview', $paragraphs_entity->language()->getId());
         $element['preview']['#access'] = $paragraphs_entity->access('view');
       }
       elseif ($item_mode == 'closed') {
         $element['subform'] = array();
         $element['behavior_plugins'] = [];
         if ($paragraphs_entity) {
+          $summary = $paragraphs_entity->getSummary();
           $element['top']['paragraph_summary']['fields_info'] = [
-            '#theme' => 'paragraphs_summary',
-            '#summary' => $paragraphs_entity->getSummaryItems(),
+            '#markup' => $summary,
+            '#prefix' => '<div class="paragraphs-collapsed-description">',
+            '#suffix' => '</div>',
           ];
         }
       }
@@ -766,6 +765,7 @@ class InlineParagraphsWidget extends WidgetBase {
         }
       }
     }
+
 
     return $return_bundles;
   }
@@ -1004,7 +1004,6 @@ class InlineParagraphsWidget extends WidgetBase {
     $access_control_handler = $entity_type_manager->getAccessControlHandler($target_type);
     $dragdrop_settings = $this->getSelectionHandlerSetting('target_bundles_drag_drop');
 
-    $this->accessOptions = [];
     foreach ($bundles as $machine_name => $bundle) {
       if ($dragdrop_settings || (empty($this->getSelectionHandlerSetting('target_bundles'))
           || in_array($machine_name, $this->getSelectionHandlerSetting('target_bundles')))) {
@@ -1037,7 +1036,7 @@ class InlineParagraphsWidget extends WidgetBase {
       $drop_button = TRUE;
       $add_more_elements['#theme_wrappers'] = ['dropbutton_wrapper'];
       $add_more_elements['prefix'] = [
-        '#markup' => '<ul class="dropbutton dropbutton--multiple dropbutton--extrasmall">',
+        '#markup' => '<ul class="dropbutton">',
         '#weight' => -999,
       ];
       $add_more_elements['suffix'] = [
@@ -1064,7 +1063,7 @@ class InlineParagraphsWidget extends WidgetBase {
       ];
 
       if ($drop_button) {
-        $add_more_elements['add_more_button_' . $machine_name]['#prefix'] = '<li class="dropbutton__item dropbutton__item--extrasmall">';
+        $add_more_elements['add_more_button_' . $machine_name]['#prefix'] = '<li>';
         $add_more_elements['add_more_button_' . $machine_name]['#suffix'] = '</li>';
       }
     }
@@ -1329,8 +1328,7 @@ class InlineParagraphsWidget extends WidgetBase {
       }
       // If our mode is remove don't save or reference this entity.
       // @todo: Maybe we should actually delete it here?
-      elseif(isset($widget_state['paragraphs'][$item['_original_delta']]['mode'])
-        && in_array($widget_state['paragraphs'][$item['_original_delta']]['mode'], ['remove', 'removed'])) {
+      elseif($widget_state['paragraphs'][$item['_original_delta']]['mode'] == 'remove' || $widget_state['paragraphs'][$item['_original_delta']]['mode'] == 'removed') {
         $item['target_id'] = NULL;
         $item['target_revision_id'] = NULL;
       }

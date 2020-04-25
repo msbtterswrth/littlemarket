@@ -20,14 +20,9 @@ class Url extends TextBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
-    return [
-      'input_hide' => FALSE,
-    ] + parent::defineDefaultProperties()
-      + $this->defineDefaultMultipleProperties();
+  public function getDefaultProperties() {
+    return parent::getDefaultProperties() + $this->getDefaultMultipleProperties();
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}

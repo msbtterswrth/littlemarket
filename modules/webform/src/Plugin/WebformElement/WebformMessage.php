@@ -22,7 +22,7 @@ class WebformMessage extends WebformMarkupBase {
   /**
    * {@inheritdoc}
    */
-  protected function defineDefaultProperties() {
+  public function getDefaultProperties() {
     return [
       // Attributes.
       'attributes' => [],
@@ -33,17 +33,15 @@ class WebformMessage extends WebformMarkupBase {
       'message_close_effect' => 'slide',
       'message_id' => '',
       'message_storage' => '',
-    ] + parent::defineDefaultProperties();
+    ] + parent::getDefaultProperties();
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function defineTranslatableProperties() {
-    return array_merge(parent::defineTranslatableProperties(), ['message_message']);
+  public function getTranslatableProperties() {
+    return array_merge(parent::getTranslatableProperties(), ['message_message']);
   }
-
-  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -91,10 +89,10 @@ class WebformMessage extends WebformMarkupBase {
       '#type' => 'select',
       '#title' => $this->t('Message type'),
       '#options' => [
-        'status' => $this->t('Status'),
-        'error' => $this->t('Error'),
-        'warning' => $this->t('Warning'),
-        'info' => $this->t('Info'),
+        'status' => t('Status'),
+        'error' => t('Error'),
+        'warning' => t('Warning'),
+        'info' => t('Info'),
       ],
       '#required' => TRUE,
     ];

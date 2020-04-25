@@ -2,7 +2,6 @@
 
 namespace Drupal\entityqueue\Plugin\Validation\Constraint;
 
-use Drupal\entityqueue\EntitySubqueueInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -15,14 +14,13 @@ class QueueSizeConstraintValidator extends ConstraintValidator {
    * {@inheritdoc}
    */
   public function validate($entity, Constraint $constraint) {
-    assert($entity instanceof EntitySubqueueInterface);
-    assert($constraint instanceof QueueSizeConstraint);
+    $number_of_items = count($entity->items);
 
+    /** @var \Drupal\entityqueue\EntityQueueInterface $queue */
     $queue = $entity->getQueue();
     $min_size = $queue->getMinimumSize();
     $max_size = $queue->getMaximumSize();
     $act_as_queue = $queue->getActAsQueue();
-    $number_of_items = count($entity->items);
 
     // Do not allow less items than the minimum size.
     if ($min_size && $number_of_items < $min_size) {

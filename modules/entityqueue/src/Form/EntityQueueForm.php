@@ -11,6 +11,7 @@ use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\entityqueue\EntityQueueInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -47,13 +48,21 @@ class EntityQueueForm extends BundleEntityFormBase {
   protected $selectionManager;
 
   /**
+   * A logger instance.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.repository'),
       $container->get('plugin.manager.entityqueue.handler'),
-      $container->get('plugin.manager.entity_reference_selection')
+      $container->get('plugin.manager.entity_reference_selection'),
+      $container->get('logger.factory')->get('entityqueue')
     );
   }
 
@@ -64,13 +73,14 @@ class EntityQueueForm extends BundleEntityFormBase {
    *   The entity type repository.
    * @param \Drupal\Component\Plugin\PluginManagerInterface $entity_queue_handler_manager
    *   The entity queue handler plugin manager.
-   * @param \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $selection_manager
-   *   The selection plugin manager.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   A logger instance.
    */
-  public function __construct(EntityTypeRepositoryInterface $entity_type_repository, PluginManagerInterface $entity_queue_handler_manager, SelectionPluginManagerInterface $selection_manager) {
+  public function __construct(EntityTypeRepositoryInterface $entity_type_repository, PluginManagerInterface $entity_queue_handler_manager, SelectionPluginManagerInterface $selection_manager, LoggerInterface $logger) {
     $this->entityTypeRepository = $entity_type_repository;
     $this->entityQueueHandlerManager = $entity_queue_handler_manager;
     $this->selectionManager = $selection_manager;
+    $this->logger = $logger;
   }
 
   /**
@@ -79,10 +89,6 @@ class EntityQueueForm extends BundleEntityFormBase {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $queue = $this->entity;
-
-    $form['#title'] = $this->t('Configure <em>@queue</em> entity queue', [
-      '@queue' => $queue->label(),
-    ]);
 
     // Default to nodes as the queue target entity type.
     $target_entity_type_id = $queue->getTargetEntityTypeId() ?: 'node';
@@ -106,10 +112,10 @@ class EntityQueueForm extends BundleEntityFormBase {
       '#disabled' => !$queue->isNew(),
     ];
 
-    $handler_plugin = $this->getHandlerPlugin($queue, $form_state);
+    $handler_plugin = $this->getHandlerPlugin($this->getEntity(), $form_state);
     $form['handler'] = [
       '#type' => 'radios',
-      '#title' => $this->t('Queue type'),
+      '#title' => $this->t('Type'),
       '#options' => $this->entityQueueHandlerManager->getAllEntityQueueHandlers(),
       '#default_value' => $handler_plugin->getPluginId(),
       '#required' => TRUE,
@@ -120,12 +126,6 @@ class EntityQueueForm extends BundleEntityFormBase {
         'trigger_as' => ['name' => 'handler_change'],
       ],
     ];
-    foreach ($this->entityQueueHandlerManager->getDefinitions() as $handler_id => $definition) {
-      if (!empty($definition['description'])) {
-        $form['handler'][$handler_id]['#description'] = $definition['description'];
-      }
-    }
-
     $form['handler_change'] = [
       '#type' => 'submit',
       '#name' => 'handler_change',
@@ -147,13 +147,7 @@ class EntityQueueForm extends BundleEntityFormBase {
 
     $form['handler_settings_wrapper']['handler_settings'] = [];
     $subform_state = SubformState::createForSubform($form['handler_settings_wrapper']['handler_settings'], $form, $form_state);
-    if ($handler_settings = $handler_plugin->buildConfigurationForm($form['handler_settings_wrapper']['handler_settings'], $subform_state)) {
-      $form['handler_settings_wrapper']['handler_settings'] = $handler_settings + [
-        '#type' => 'details',
-        '#title' => $this->t('@handler settings', ['@handler' => $handler_plugin->getPluginDefinition()['title']]),
-        '#open' => TRUE,
-      ];
-    }
+    $form['handler_settings_wrapper']['handler_settings'] = $handler_plugin->buildConfigurationForm($form['handler_settings_wrapper']['handler_settings'], $subform_state);
 
     $form['settings'] = [
       '#type' => 'vertical_tabs',
@@ -170,7 +164,7 @@ class EntityQueueForm extends BundleEntityFormBase {
       '#type' => 'container',
       '#attributes' => ['class' => ['form--inline', 'clearfix']],
       '#process' => [
-        [EntityReferenceItem::class, 'formProcessMergeParent'],
+        [EntityReferenceItem::class, 'formProcessMergeParent']
       ],
     ];
     $form['queue_settings']['size']['min_size'] = [
@@ -189,18 +183,18 @@ class EntityQueueForm extends BundleEntityFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Act as queue'),
       '#default_value' => $queue->getActAsQueue(),
-      '#description' => $this->t('When enabled, adding more than the maximum number of items will remove extra items from the queue.'),
+      '#description' => $this->t('When enabled, adding more than the maximum number of items will remove extra items from the top of the queue.'),
       '#states' => [
         'invisible' => [
           ':input[name="queue_settings[max_size]"]' => ['value' => 0],
         ],
       ],
     ];
-    $form['queue_settings']['reverse'] = [
+    $form['queue_settings']['reverse_in_admin'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Reverse'),
-      '#default_value' => $queue->isReversed(),
-      '#description' => $this->t('By default, new items are added to the bottom of the queue. If this option is checked, new items will be added to the top of the queue.'),
+      '#title' => $this->t('Reverse order in admin view'),
+      '#default_value' => $queue->getReverseInAdmin(),
+      '#description' => $this->t('Ordinarily queues are arranged with the front of the queue (where items will be removed) on top and the back (where items will be added) on the bottom. If checked, this will display the queue such that items will be added to the top and removed from the bottom.'),
     ];
 
     // We have to duplicate all the code from
@@ -236,13 +230,13 @@ class EntityQueueForm extends BundleEntityFormBase {
       '#type' => 'container',
       '#process' => [
         [EntityReferenceItem::class, 'fieldSettingsAjaxProcess'],
-        [EntityReferenceItem::class, 'formProcessMergeParent'],
+        [EntityReferenceItem::class, 'formProcessMergeParent']
       ],
       '#element_validate' => [[get_class($this), 'entityReferenceSelectionSettingsValidate']],
     ];
 
     // @todo It should be up to the queue handler to determine what entity types
-    //   are queue-able.
+    // are queue-able.
     $form['entity_settings']['settings']['target_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Type of items to queue'),
@@ -287,12 +281,6 @@ class EntityQueueForm extends BundleEntityFormBase {
       $form['entity_settings']['settings']['handler_settings']['target_bundles']['#required'] = FALSE;
     }
 
-    // Also, the 'auto-create' option is mostly useless and confusing in the
-    // entityqueue UI.
-    if (isset($form['entity_settings']['settings']['handler_settings']['auto_create'])) {
-      $form['entity_settings']['settings']['handler_settings']['auto_create']['#access'] = FALSE;
-    }
-
     return $form;
   }
 
@@ -317,7 +305,6 @@ class EntityQueueForm extends BundleEntityFormBase {
       $handler_configuration = $handler_id === $stored_handler_id ? $entity->getHandlerConfiguration() : [];
 
       $handler_plugin = $this->entityQueueHandlerManager->createInstance($handler_id, $handler_configuration);
-      $handler_plugin->setQueue($entity);
       $form_state->set('handler_plugin', $handler_plugin);
     }
     return $handler_plugin;
@@ -350,7 +337,6 @@ class EntityQueueForm extends BundleEntityFormBase {
     /** @var \Drupal\entityqueue\EntityQueueInterface $queue */
     $queue = $form_state->getFormObject()->getEntity();
 
-    /** @var \Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $selection_handler */
     $selection_handler = \Drupal::service('plugin.manager.entity_reference_selection')->getInstance($queue->getEntitySettings());
 
     // @todo Take care of passing the right $form and $form_state structures to
@@ -372,7 +358,7 @@ class EntityQueueForm extends BundleEntityFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
-    $handler_plugin = $this->getHandlerPlugin($this->entity, $form_state);
+    $handler_plugin = $this->getHandlerPlugin($this->getEntity(), $form_state);
     $subform_state = SubformState::createForSubform($form['handler_settings_wrapper']['handler_settings'], $form, $form_state);
     $handler_plugin->validateConfigurationForm($form['handler_settings_wrapper']['handler_settings'], $subform_state);
   }
@@ -401,12 +387,12 @@ class EntityQueueForm extends BundleEntityFormBase {
 
     $edit_link = $queue->toLink($this->t('Edit'), 'edit-form')->toString();
     if ($status == SAVED_UPDATED) {
-      $this->messenger()->addMessage($this->t('The entity queue %label has been updated.', ['%label' => $queue->label()]));
-      $this->logger('entityqueue')->notice('The entity queue %label has been updated.', ['%label' => $queue->label(), 'link' => $edit_link]);
+      drupal_set_message($this->t('The entity queue %label has been updated.', ['%label' => $queue->label()]));
+      $this->logger->notice('The entity queue %label has been updated.', ['%label' => $queue->label(), 'link' => $edit_link]);
     }
     else {
-      $this->messenger()->addMessage($this->t('The entity queue %label has been added.', ['%label' => $queue->label()]));
-      $this->logger('entityqueue')->notice('The entity queue %label has been added.', ['%label' => $queue->label(), 'link' => $edit_link]);
+      drupal_set_message($this->t('The entity queue %label has been added.', ['%label' => $queue->label()]));
+      $this->logger->notice('The entity queue %label has been added.', ['%label' => $queue->label(), 'link' => $edit_link]);
     }
 
     $form_state->setRedirectUrl($queue->toUrl('collection'));

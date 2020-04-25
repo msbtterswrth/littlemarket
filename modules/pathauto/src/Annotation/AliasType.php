@@ -21,9 +21,9 @@ class AliasType extends Plugin {
   /**
    * The human-readable name of the action plugin.
    *
-   * @var \Drupal\Core\Annotation\Translation
-   *
    * @ingroup plugin_translatable
+   *
+   * @var \Drupal\Core\Annotation\Translation
    */
   public $label;
 
@@ -32,6 +32,6 @@ class AliasType extends Plugin {
    *
    * @var string[]
    */
-  public $types = [];
+  public $types = array();
 
 }

@@ -28,8 +28,8 @@
 }
 
 .webform-ajax-messages .messages {
-  margin: 0;
   border-width: 10px 0 0 0;
+  margin: 0;
   font-weight: bold;
 }
 
@@ -46,10 +46,10 @@
  * @see core/misc/dialog/dialog.position.js
  * @see \Drupal\webform\Utility\WebformDialogHelper::getModalDialogAttributes
  */
-.webform-ui-dialog {
+.webform-modal {
   top: 50px !important;
 }
 
-.toolbar-tray-open.toolbar-horizontal .webform-ui-dialog {
+.toolbar-tray-open.toolbar-horizontal .webform-modal {
   top: 90px !important;
 }

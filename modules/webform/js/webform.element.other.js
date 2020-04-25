@@ -33,15 +33,11 @@
 
       // Display the element.
       $element[showEffect]();
-      // If not initializing, then focus the other element.
-      if (effect !== false) {
-        $input.focus();
-      }
-      // Require the input.
-      $input.prop('required', true).attr('aria-required', 'true');
+      // Focus and require the input.
+      $input.focus().prop('required', true).attr('aria-required', 'true');
       // Restore the input's value.
       var value = $input.data('webform-value');
-      if (typeof value !== 'undefined') {
+      if (value !== undefined) {
         $input.val(value);
         var input = $input.get(0);
         // Move cursor to the beginning of the other text input.
@@ -76,19 +72,14 @@
         var $element = $(this);
 
         var $select = $element.find('select');
+        var $otherOption = $element.find('option[value="_other_"]');
         var $input = $element.find('.js-webform-select-other-input');
 
         $select.on('change', function () {
-          var isOtherSelected = $select
-            .find('option[value="_other_"]')
-            .is(':selected');
-          toggleOther(isOtherSelected, $input);
+          toggleOther($otherOption.is(':selected'), $input);
         });
 
-        var isOtherSelected = $select
-          .find('option[value="_other_"]')
-          .is(':selected');
-        toggleOther(isOtherSelected, $input, false);
+        toggleOther($otherOption.is(':selected'), $input, false);
       });
     }
   };
