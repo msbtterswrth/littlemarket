@@ -131,25 +131,35 @@ header {
                         }
                     }
                 }
-                .mobile-menu {
-                    background: #000;
-                    padding: 30px;
-                    position: fixed;
-                    text-align: center;
-                    ul {
-                        list-style-type: none;
-                        margin: 0;
-                        padding: 0;
-                        li {
+            }
+            .menu-toggle {
+                display: none;
+                @include breakpoint(sm-max) {
+                    display: block;
+                }
+            }
+            .mobile-menu {
+                background: #000;
+                display: none;
+                padding: 30px;
+                position: fixed;
+                text-align: center;
+                @include breakpoint(sm-max) {
+                    display: block;
+                }
+                ul {
+                    list-style-type: none;
+                    margin: 0;
+                    padding: 0;
+                    li {
+                        display: block;
+                        a {
+                            color: #fff;
                             display: block;
-                            a {
-                                color: #fff;
-                                display: block;
-                            }
                         }
                     }
                 }
-            }            
+            }
         }
     }
 }
