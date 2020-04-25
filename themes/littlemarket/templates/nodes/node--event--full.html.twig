@@ -1,0 +1,12 @@
+<article{{ attributes.addClass('event') }}>
+  <div class="row">
+      <div class="col-xs-12 col-sm-5 pull-right">
+        {{ content.field_image }}
+      </div>
+      <div class="col-xs-12 col-sm-7">
+        <div class="date"><p><strong>{{ content.field_date }}</strong> - {{ content.field_time }}</p></div>
+        {{ content.body }}
+        {{ content.field_slider }}
+      </div>
+  </div>
+</article>

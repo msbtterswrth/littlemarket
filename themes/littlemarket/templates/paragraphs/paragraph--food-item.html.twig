@@ -1,0 +1,26 @@
+<div class="food-item">
+    <div class="row">
+        <div class="col-xs-12 col-sm-9">
+            <h5>{{ content.field_title }}</h5>
+        </div>
+        <div class="col-xs-12 col-sm-3">
+            <div class="price">{{ content.field_price }}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-9">
+            <p>{{ content.field_description }}</p>
+        </div>
+        <div class="col-xs-12 col-sm-3">
+            {% if paragraph.field_vegan.value %}
+                <i class="icon-vegan"></i>
+            {% endif %}
+            {% if paragraph.field_vegetarian.value %}
+                <i class="icon-veg"></i>
+            {% endif %}
+            {% if paragraph.field_gluten_free.value %}
+                <i class="icon-gf"></i>
+            {% endif %}
+        </div>
+    </div>
+</div>

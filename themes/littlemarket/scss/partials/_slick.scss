@@ -1,0 +1,62 @@
+.slick {
+    .slick-arrow {
+        background:$teal;
+        color: #fff;
+        font-size: 50px;
+        position:absolute;
+        height:70px;
+        line-height: 80px;
+        top: 50%;
+        text-align: center;
+        width:70px;
+        z-index:9;
+        @include translate(0,-50%);
+        @include transition(background .3s linear, color .3s linear);
+		@include breakpoint(xs) {
+            margin-top: -35px;
+            top: 0;
+            width:50px;
+        }
+        &.prev-slide {
+            left: -30px;
+            @include breakpoint(xs) {
+                left: -15px;
+            }
+        }
+        &.next-slide {
+            right: -30px;
+            @include breakpoint(xs) {
+                right: -15px;
+            }
+        }
+        &:hover {
+            background:darken($teal,10%);
+        }
+    }
+    .slick-slide  {
+        position:relative;
+        img {
+            width:100%;
+            height:auto;
+            margin: 0 auto;
+        }
+        .caption {
+            border-left: 3px solid $teal;
+            margin-top: 20px;
+            padding-left: 15px;
+            font-size: 18px;
+            line-height: 24px;
+
+        }
+    }
+    .slide-wrap {
+        .slick-arrow {            
+            &.prev-slide {
+                left: 0;
+            }
+            &.next-slide {
+                right: 0;
+            }
+        }
+    }
+}

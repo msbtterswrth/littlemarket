@@ -1,0 +1,24 @@
+name: Little Market
+type: theme
+description: 'Little Market'
+package: Core
+version: VERSION 1.0
+core: 8.x
+base theme: false
+libraries:
+  - littlemarket/global
+regions:
+  drawer: 'Drawer'
+  header: 'Header'
+  navigation: 'Navigation'
+  banner: 'Banner'
+  top: 'Top'
+  content_top: 'Content Top'
+  content: 'Content'
+  sidebar: 'Sidebar'
+  content_bottom: 'Content Bottom'
+  feature: 'Feature'
+  bottom: 'Bottom'
+  footer: 'Footer'
+  copyright: 'Copyright'
+  offcanvas: 'Off Canvas'

@@ -1,0 +1,20 @@
+{% extends 'paragraph.html.twig' %}
+{% block content %}
+{% if paragraph.field_image.value is empty %}
+    {% set class = 'no-image' %}
+{% endif %}
+<div class="hero alt {{ class }}" style="background:url({{ file_url(paragraph.field_image.entity.uri.value) }}) no-repeat center; background-size:cover;">
+    <div class="container">
+        <div class="blurb">
+            {% if paragraph.field_show_logo_.value %}
+                <img src="/sites/default/files/logo.png" class="logo">
+            {% endif %}
+            <h1>{{ content.field_title.0 }}</h1>
+            {{ content.field_body }}
+            {% if paragraph.field_link.value %}
+                <a href="{{ content.field_link.uri }}" class="btn clear large">{{ content.field_link.0['#title'] }}</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+<div class="food-item drink">
+    <div class="row">
+        <div class="col-xs-12 col-sm-8">
+            <h5>{{ content.field_title }}</h5>
+            <p>{{ content.field_description }}</p>
+            {% if paragraph.field_vegan.value %}
+                <i class="icon-vegan"></i>
+            {% endif %}
+            {% if paragraph.field_gluten_free.value %}
+                <i class="icon-gf"></i>
+            {% endif %}
+        </div>   
+        <div class="col-xs-12 col-sm-4">
+            <div class="price">
+                {% if paragraph.field_small_price.value %}<span>S {{ content.field_small_price }}</span>{% endif %}
+                {% if paragraph.field_price.value %}<span>M {{ content.field_price }}</span>{% endif %}
+                {% if paragraph.field_large_price.value %}<span>L {{ content.field_large_price }}</span>{% endif %}
+            </div>
+        </div>
+    </div> 
+</div>

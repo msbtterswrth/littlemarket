@@ -1,0 +1,13 @@
+{% extends 'paragraph.html.twig' %}
+{% block content %}
+    <div class="img">      
+        {{ content.field_image }}
+    </div>
+    <div class="container"> 
+        <div class="blurb">
+            <div class="prev-slide"><i class="icon-left-arrow"></i></div>
+            {{ content.field_body }}
+            <div class="next-slide"><i class="icon-right-arrow"></i></div>
+        </div>
+    </div>
+{% endblock %}

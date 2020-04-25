@@ -1,0 +1,154 @@
+.header {
+    padding: 20px 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 9;
+    .menu-toggle {
+        display: none;
+        float:right;
+        color: #fff;
+        font-size: 40px;
+        @include breakpoint(xs){
+            display: block;
+        }
+    }
+    nav {
+        margin-top: 20px;
+        @include breakpoint(xs){
+            margin: 0;
+        }
+        ul {
+            text-align: right;
+            @include transition(right .3s $cubic);
+            @include breakpoint(xs){
+                background:url("/themes/littlemarket/img/footer-bg.jpg") no-repeat $dk-gray;
+                background-size:cover;
+                height: 100vh;
+                padding: 20px;
+                position: fixed;
+                right: -100vw;
+                top: 0;
+                width: 60vw;
+                .menu-open &{
+                    right:-60vw;
+                }
+            }
+            li {
+                display: inline-block;
+                margin-left: 30px;
+                @include breakpoint(xs) {
+                    margin-bottom: 20px;
+                }
+                &.parent {
+                    position: relative;                    
+                    &:hover, &:focus, &:active {
+                        > a {
+                            &::after {
+                                @include rotate(180);
+                            }
+                        }
+                        > ul {
+                            opacity: 1;
+                            visibility: visible;
+                            @include breakpoint(xs) {
+                                height: auto;
+                                overflow: visible;
+                            }
+                        }
+                    }
+                    > a {
+                        padding-right: 25px;
+                        &::after {
+                            color: #fff;
+                            content: "\f107";
+                            font-family: icomoon;
+                            font-size: 30px;
+                            line-height: 22px;
+                            position: absolute;
+                            right: 0;
+                            top: 0;
+                            @include transition(color .3s linear);
+                        }
+                        &:hover, &:focus {
+                            &::after {
+                                color: $gold;
+                            }
+                        }
+                    }
+                }
+                &.level-1 {
+                    position: relative;
+                    > ul {
+                        background:rgba($dk-gray,.9);
+                        left:0;
+                        opacity: 0;
+                        padding: 10px;
+                        position: absolute;
+                        text-align: left;
+                        top: 0;
+                        top: 100%;
+                        visibility: hidden;
+                        width: 200px;
+                        @include transition(opacity .3s linear);
+                        @include breakpoint(xs) {
+                            background: none;
+                            height: 0;
+                            overflow: hidden;
+                            padding: 0;
+                            position: relative;
+                            right: 0;
+                            text-align: right;
+                            width: auto;
+                        }
+                        .level-2 {
+                            display: block;
+                            margin:0;
+                            + .level-2 {
+                                margin-top:10px;
+                                @include breakpoint(xs) {
+                                    margin-top: 0;
+                                }
+                            }
+                            a {
+                                font-size: 16px;
+                                text-transform: none;
+                            }
+                        }
+                    }
+                }
+                a {
+                    color: #fff;
+                    display: block;
+                    font-size: 18px;
+                    font-weight: 500;
+                    letter-spacing: 1px;
+                    text-decoration: none;
+                    text-transform: uppercase;
+                    @include transition(color .3s linear);
+                    &:hover, &:focus, &.is-active {
+                        color:$gold;
+                        &::after {
+                            color: $gold;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+body {
+    @include breakpoint(xs){
+        overflow-x: hidden;
+        @include translate(0,0);
+        @include transition(transform .3s $cubic);
+    }
+    &.menu-open {
+        @include breakpoint(xs){
+            @include translate(-60vw,0);
+            overflow: hidden;
+        }
+    }
+}
