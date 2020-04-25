@@ -162,11 +162,6 @@
   padding-left: 0.25em;
 }
 
-a.button:hover,
-a.button:active {
-  color: #222330;
-}
-
 /* Primary button styles */
 
 .button--primary {
@@ -183,11 +178,6 @@ a.button:active {
   background-color: #00339a;
 }
 
-a.button--primary:hover,
-a.button--primary:active {
-  color: #fff;
-}
-
 /* Danger button styles */
 
 .button--danger {
@@ -202,11 +192,6 @@ a.button--primary:active {
 
 .button--danger:active {
   background-color: #ab1b1b;
-}
-
-a.button--danger:hover,
-a.button--danger:active {
-  color: #fff;
 }
 
 /**

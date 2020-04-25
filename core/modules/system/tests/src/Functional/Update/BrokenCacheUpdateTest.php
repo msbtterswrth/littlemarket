@@ -3,16 +3,15 @@
 namespace Drupal\Tests\system\Functional\Update;
 
 use Drupal\Core\Database\Database;
-use Drupal\Tests\BrowserTestBase;
-use Drupal\Tests\UpdatePathTestTrait;
+use Drupal\FunctionalTests\Update\UpdatePathTestBase;
 
 /**
  * Ensures that a broken or out-of-date element info cache is not used.
  *
  * @group Update
+ * @group legacy
  */
-class BrokenCacheUpdateTest extends BrowserTestBase {
-  use UpdatePathTestTrait;
+class BrokenCacheUpdateTest extends UpdatePathTestBase {
 
   /**
    * {@inheritdoc}
@@ -22,9 +21,10 @@ class BrokenCacheUpdateTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    parent::setUp();
-    $this->ensureUpdatesToRun();
+  protected function setDatabaseDumpFiles() {
+    $this->databaseDumpFiles = [
+      __DIR__ . '/../../../../tests/fixtures/update/drupal-8.6.0.bare.testing.php.gz',
+    ];
   }
 
   /**
@@ -40,8 +40,7 @@ class BrokenCacheUpdateTest extends BrowserTestBase {
       ->execute();
 
     // Create broken element info caches entries.
-    $insert = $connection->upsert('cache_discovery');
-    $insert->key('cid');
+    $insert = $connection->insert('cache_discovery');
     $fields = [
       'cid' => 'element_info',
       'data' => 'BROKEN',

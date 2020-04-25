@@ -15,6 +15,13 @@ use Drupal\webform_image_select\WebformImageSelectImagesInterface;
  * @ConfigEntityType(
  *   id = "webform_image_select_images",
  *   label = @Translation("Webform images"),
+ *   label_collection = @Translation("Images"),
+ *   label_singular = @Translation("images"),
+ *   label_plural = @Translation("images"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count images",
+ *     plural = "@count images",
+ *   ),
  *   handlers = {
  *     "storage" = "\Drupal\webform_image_select\WebformImageSelectImagesStorage",
  *     "access" = "Drupal\webform_image_select\WebformImageSelectImagesAccessControlHandler",
@@ -24,7 +31,7 @@ use Drupal\webform_image_select\WebformImageSelectImagesInterface;
  *       "edit" = "Drupal\webform_image_select\WebformImageSelectImagesForm",
  *       "source" = "Drupal\webform_image_select\WebformImageSelectImagesForm",
  *       "duplicate" = "Drupal\webform_image_select\WebformImageSelectImagesForm",
- *       "delete" = "Drupal\Core\Entity\EntityDeleteForm",
+ *       "delete" = "Drupal\webform_image_select\WebformImageSelectImagesDeleteForm",
  *     }
  *   },
  *   admin_permission = "administer webform",
@@ -33,7 +40,7 @@ use Drupal\webform_image_select\WebformImageSelectImagesInterface;
  *     "label" = "label",
  *   },
  *   links = {
- *     "add-form" = "/admin/structure/webform/config/images/add",
+ *     "add-form" = "/admin/structure/webform/config/images/manage/add",
  *     "edit-form" = "/admin/structure/webform/config/images/manage/{webform_image_select_images}/edit",
  *     "source-form" = "/admin/structure/webform/config/images/manage/{webform_image_select_images}/source",
  *     "duplicate-form" = "/admin/structure/webform/config/images/manage/{webform_image_select_images}/duplicate",
@@ -106,7 +113,7 @@ class WebformImageSelectImages extends ConfigEntityBase implements WebformImageS
         $options = (is_array($options)) ? $options : [];
       }
       catch (\Exception $exception) {
-        $link = $this->link($this->t('Edit'), 'edit-form');
+        $link = $this->toLink($this->t('Edit'), 'edit-form')->toString();
         \Drupal::logger('webform_image_select')->notice('%title images are not valid. @message', ['%title' => $this->label(), '@message' => $exception->getMessage(), 'link' => $link]);
         $options = FALSE;
       }
@@ -146,9 +153,8 @@ class WebformImageSelectImages extends ConfigEntityBase implements WebformImageS
    * {@inheritdoc}
    */
   public static function getElementImages(array &$element) {
-
     // If element already has #images return them.
-    if (is_array($element['#images'])) {
+    if (isset($element['#images']) && is_array($element['#images'])) {
       return $element['#images'];
     }
 
@@ -167,7 +173,7 @@ class WebformImageSelectImages extends ConfigEntityBase implements WebformImageS
       $images = [];
     }
 
-    // Alter iamges using hook_webform_image_select_images_alter()
+    // Alter images using hook_webform_image_select_images_alter()
     // and/or hook_webform_image_select_images_WEBFORM_IMAGE_SELECT_IMAGES_ID_alter() hook.
     // @see webform.api.php
     \Drupal::moduleHandler()->alter('webform_image_select_images_' . $id, $images, $element);

@@ -15,16 +15,17 @@ abstract class NumericBase extends WebformElementBase {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultProperties() {
+  protected function defineDefaultProperties() {
     return [
       // Form validation.
+      'readonly' => FALSE,
       'size' => '',
-      'minlength' => '',
-      'maxlength' => '',
       'placeholder' => '',
       'autocomplete' => 'on',
-    ] + parent::getDefaultProperties();
+    ] + parent::defineDefaultProperties();
   }
+
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -61,14 +62,14 @@ abstract class NumericBase extends WebformElementBase {
     $form['number']['number_container'] = $this->getFormInlineContainer();
     $form['number']['number_container']['min'] = [
       '#type' => 'number',
-      '#title' => $this->t('Min'),
+      '#title' => $this->t('Minimum'),
       '#description' => $this->t('Specifies the minimum value.'),
       '#step' => 'any',
       '#size' => 4,
     ];
     $form['number']['number_container']['max'] = [
       '#type' => 'number',
-      '#title' => $this->t('Max'),
+      '#title' => $this->t('Maximum'),
       '#description' => $this->t('Specifies the maximum value.'),
       '#step' => 'any',
       '#size' => 4,

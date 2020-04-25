@@ -971,11 +971,14 @@ class Sql extends PluginBase implements MigrateIdMapInterface, ContainerFactoryP
    * {@inheritdoc}
    */
   public function getHighestId() {
-    // Ensure that the first ID is an integer.
-    $keys = $this->migration->getDestinationPlugin()->getIds();
-    if (reset($keys)['type'] !== 'integer') {
-      throw new \LogicException('To determine the highest migrated ID the first ID must be an integer');
-    }
+    array_filter(
+      $this->migration->getDestinationPlugin()->getIds(),
+      function (array $id) {
+        if ($id['type'] !== 'integer') {
+          throw new \LogicException('Cannot determine the highest migrated ID without an integer ID column');
+        }
+      }
+    );
 
     // List of mapping tables to look in for the highest ID.
     $map_tables = [

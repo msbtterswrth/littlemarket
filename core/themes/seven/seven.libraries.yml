@@ -61,12 +61,6 @@ maintenance-page:
     - system/maintenance
     - seven/global-styling
 
-update-report:
-  version: VERSION
-  css:
-    theme:
-      css/theme/update-report.css: {}
-
 install-page:
   version: VERSION
   js:

@@ -303,7 +303,7 @@ $settings['hash_salt'] = 'GivjZp9PIlbkp79PNmah14JpA0G9rKUCKkABb2FvLnA4wjnMpDweYp
  * After finishing the upgrade, be sure to open this file again and change the
  * TRUE back to a FALSE!
  */
-$settings['update_free_access'] = true;
+$settings['update_free_access'] = FALSE;
 
 /**
  * External access proxy settings:
@@ -771,7 +771,7 @@ $settings['entity_update_batch_size'] = 50;
 $databases['default']['default'] = array (
   'database' => 'dbrmce4xz3he67',
   'username' => 'ubm7u2cybvbha',
-  'password' => '9mkrrjmewmuh',
+  'password' => ')#d112ifly]@',
   'prefix' => 'dr0w_',
   'host' => 'localhost',
   'port' => '3306',
