@@ -46,6 +46,13 @@
             background: darken($red, 10%);
         }
     }
+    &.raspberry {
+        background:$raspberry;
+        color:#fff;
+        &:hover, &:focus {
+            background: darken($raspberry, 10%);
+        }
+    }
     &.green {
         background:$green;
         color:#fff;

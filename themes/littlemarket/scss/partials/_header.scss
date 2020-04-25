@@ -85,6 +85,9 @@ header {
                 &:last-of-type {            
                     grid-column-start:3;
                 }
+                @include breakpoint(sm-max) {
+                    display: none;
+                }
                 ul {
                     list-style-type:none;
                     margin:0; 
@@ -106,8 +109,8 @@ header {
                                 color: $salmon;
                             }
                             &.pink {
-                                color: $raspberry;
-                                @include animation(pink-pulse 1s linear infinite alternate);
+                                color: $raspberry;                                           
+                                @include animation(pink-pulse 1s linear infinite alternate);  
                                 @at-root {
                                     @include keyframes(pink-pulse) {
                                         from {
@@ -128,7 +131,25 @@ header {
                         }
                     }
                 }
-            }
+                .mobile-menu {
+                    background: #000;
+                    padding: 30px;
+                    position: fixed;
+                    text-align: center;
+                    ul {
+                        list-style-type: none;
+                        margin: 0;
+                        padding: 0;
+                        li {
+                            display: block;
+                            a {
+                                color: #fff;
+                                display: block;
+                            }
+                        }
+                    }
+                }
+            }            
         }
     }
 }
