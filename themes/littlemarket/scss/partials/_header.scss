@@ -167,9 +167,6 @@ header {
                 @include breakpoint(smmax) {
                     display: block;
                 }
-                .menu-open &{
-                    left: 30vw;
-                }
                 ul {
                     list-style-type: none;
                     margin: 0;
@@ -191,7 +188,6 @@ header {
 body {
     @include breakpoint(xs){
         overflow-x: hidden;
-        @include translate(0,0);
         @include transition(transform .3s $cubic);
     }
     &.menu-open {
