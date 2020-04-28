@@ -13,7 +13,7 @@ div[class*="box"], nav[class*="box"] {
         a {
             color: #fff;
             &:hover, &:focus {
-                color: $purple;
+                color: $raspberry;
             }
         }
     }
@@ -29,18 +29,18 @@ div[class*="box"], nav[class*="box"] {
         text-decoration: none;
         text-transform:uppercase;
         &:hover {
-            color:$purple;
+            color:#000;
         }
     }
     span {
-        color:$purple;
+        color:#000;
         letter-spacing:1px;
         text-transform:uppercase;
         position: relative;
         &::before {
             content: "";
             height: 3px;
-            background: $purple;
+            background: $avacado;
             width: 100%;
             bottom: calc(100% + 9px);
             left: 0;
