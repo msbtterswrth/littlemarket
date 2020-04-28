@@ -15,6 +15,9 @@
         @include breakpoint(xs) {
             font-size: 16px;
         }
+        a {
+            color: $raspberry;
+        }
     }
     i {
         color:#fff;
@@ -74,7 +77,7 @@
             top: 0;
             &:hover, &:focus {
                 &::before {
-                    color: $purple;
+                    color: $raspberry;
                 }
             }
             &::before {

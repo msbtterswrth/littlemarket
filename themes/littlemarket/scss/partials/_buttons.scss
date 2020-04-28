@@ -15,6 +15,9 @@
     text-transform: uppercase;
     z-index: 1;
     @include transition(background .3s linear, color .3s linear);
+    + a {
+        margin-bottom: 15px;
+    }
     &.small {
         font-size:16px;
         padding:10px 20px;
