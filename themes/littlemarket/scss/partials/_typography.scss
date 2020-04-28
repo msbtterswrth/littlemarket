@@ -174,14 +174,16 @@ body {
     p {
         font-size:16px;
         line-height:22px;
-        margin-bottom:20px;
+        margin-bottom:20px;        
         &.lead {
-            text-transform:none;
-            font-weight:200;
-            font-family:$sans;
-            font-size:35px;
-            line-height:40px;
-            margin:0 0 30px 0;
+            font-family: $serif;
+            font-size:21px;
+            line-height:28px;
+            &:first-letter {
+                color: $raspberry;
+                font-size:36px;
+                font-weight:600;
+            }
         }
     }
     a {

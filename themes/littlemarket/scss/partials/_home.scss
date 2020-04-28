@@ -26,15 +26,5 @@
         color: #333;
         font-family: $serif;
         font-size:18px;
-        &.lead {
-            font-family: $serif;
-            font-size:21px;
-            line-height:28px;
-            &:first-letter {
-                color: $raspberry;
-                font-size:36px;
-                font-weight:600;
-            }
-        }
     }
 }

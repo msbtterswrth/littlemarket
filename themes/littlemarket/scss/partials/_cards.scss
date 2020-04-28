@@ -1,0 +1,22 @@
+body {
+    .card {
+        margin-bottom: 20px;
+        padding: 20px 30px;
+        &.raspberry {
+            background: $raspberry;
+            color: #fff;
+            a {
+                font-weight: bold;
+                text-decoration: underline;
+            }
+        }
+        &.avacado {
+            background: $avacado;
+            color: #000;
+            a {
+                font-weight: bold;
+                text-decoration: underline;
+            }
+        }
+    } 
+}
