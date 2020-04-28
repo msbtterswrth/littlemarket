@@ -25,9 +25,12 @@
     p {
         font-family: $serif;
         font-size:18px;
-        a {
-            @include breakpoint(xs) {
-                display: block;
+        .btn {
+            .small {
+                @include breakpoint(xs) {
+                    display: block;
+                    margin-bottom: 10px;
+                }
             }
         }
     }
