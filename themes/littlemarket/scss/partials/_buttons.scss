@@ -1,10 +1,11 @@
 .btn {
     border-radius:0;
-    border:0;
+    border:2px solid;
     box-shadow:none!important;
     outline:none!important;
-    font-weight: 500;
+    font-family: $sans;
     font-size:16px;
+    font-weight: 500;
     letter-spacing: 1px;
     line-height:20px;
     padding:16px 30px;
@@ -33,38 +34,57 @@
     }
     &.blue {
         background:$blue;
+        border-color: $blue;
         color:#fff;
         &:hover, &:focus {
             background: darken($blue, 10%);
+            border-color: darken($blue, 10%);
         }
         
     }
     &.red {
         background:$red;
+        border-color: $red;
         color:#fff;
         &:hover, &:focus {
             background: darken($red, 10%);
+            border-color: darken($red, 10%);
         }
     }
     &.raspberry {
         background:$raspberry;
+        border-color: $raspberry;
         color:#fff;
         &:hover, &:focus {
             background: darken($raspberry, 10%);
+            border-color: darken($raspberry, 10%);
         }
     }
     &.green {
         background:$green;
+        border-color: $green;
         color:#fff;
         &:hover, &:focus {
             background: darken($green, 10%);
+            border-color: darken($green, 10%);
         }
     }
     &.black {
         background:#000;
+        border-color: #000;
         color:#fff;
         &:hover, &:focus {
             background: $dk-gray;
+            border-color: $dk-gray;
+        }
+        &.outline {
+            background: transparent;
+            border: 2px solid #000;
+            color: #000;
+            &:hover, &:focus {
+                background: #000;
+                color: #fff;
+            }
         }
     }
     &.link {
