@@ -5,14 +5,35 @@ body {
         &.raspberry {
             background: $raspberry;
             color: #fff;
+            &.outline {
+                background: transparent;
+                border: 2px solid $raspberry;
+                color: #000;
+            }
             a {
                 font-weight: bold;
                 text-decoration: underline;
             }
         }
-        &.avacado {
-            background: $avacado;
+        &.avocado {
+            background: $avocado;
             color: #000;
+            &.outline {
+                background: transparent;
+                border: 2px solid $avocado;
+            }
+            a {
+                font-weight: bold;
+                text-decoration: underline;
+            }
+        }
+        &.gray {            
+            background: $gray;
+            color: #000;
+            &.outline {
+                background: transparent;
+                border: 2px solid $gray;
+            }
             a {
                 font-weight: bold;
                 text-decoration: underline;
