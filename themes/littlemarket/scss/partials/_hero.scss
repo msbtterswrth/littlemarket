@@ -71,6 +71,9 @@
             height:40vh;
             min-height: 500px;
             .blurb {
+                @include breakpoint(smmax) {
+                    margin: 300px auto 80px;
+                }
                 h1 {
                     font-family: $sans;
                     font-weight: 600;
