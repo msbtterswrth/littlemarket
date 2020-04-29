@@ -123,15 +123,9 @@
                                 {{ page.content }}
                             </div>
                         </div>
-                    {% elseif page.sidebar_large %}
-                        <div class="col-xs-12 col-sm-5 pull-right">
-                            <div class="sidebar large">
-                                {{ page.sidebar_large }}
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-7">
-                            <div class="main">
-                                {{ page.content }}
+                        <div class="col-xs-12 col-sm-4 col-md-3 pull-right">
+                            <div class="sidebar bottom">
+                                {{ page.sidebar_bottom }}
                             </div>
                         </div>
                     {% else %} 

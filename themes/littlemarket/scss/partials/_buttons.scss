@@ -34,6 +34,42 @@
             color:#fff;
         }
     }
+    &.raspberry {
+        background:$raspberry;
+        border-color: $raspberry;
+        color:#fff;
+        &:hover, &:focus {
+            background: darken($raspberry, 10%);
+            border-color: darken($raspberry, 10%);
+        }
+    }
+    &.avocado {
+        background:$avocado;
+        border-color: $avocado;
+        color:#000;
+        &:hover, &:focus {
+            background: darken($avocado, 10%);
+            border-color: darken($avocado, 10%);
+        }
+    }
+    &.black {
+        background:#000;
+        border-color: #000;
+        color:#fff;
+        &:hover, &:focus {
+            background: $dk-gray;
+            border-color: $dk-gray;
+        }
+        &.outline {
+            background: transparent;
+            border: 2px solid #000;
+            color: #000;
+            &:hover, &:focus {
+                background: #000;
+                color: #fff;
+            }
+        }
+    }
     &.blue {
         background:$blue;
         border-color: $blue;
@@ -53,15 +89,6 @@
             border-color: darken($red, 10%);
         }
     }
-    &.raspberry {
-        background:$raspberry;
-        border-color: $raspberry;
-        color:#fff;
-        &:hover, &:focus {
-            background: darken($raspberry, 10%);
-            border-color: darken($raspberry, 10%);
-        }
-    }
     &.green {
         background:$green;
         border-color: $green;
@@ -69,24 +96,6 @@
         &:hover, &:focus {
             background: darken($green, 10%);
             border-color: darken($green, 10%);
-        }
-    }
-    &.black {
-        background:#000;
-        border-color: #000;
-        color:#fff;
-        &:hover, &:focus {
-            background: $dk-gray;
-            border-color: $dk-gray;
-        }
-        &.outline {
-            background: transparent;
-            border: 2px solid #000;
-            color: #000;
-            &:hover, &:focus {
-                background: #000;
-                color: #fff;
-            }
         }
     }
     &.link {

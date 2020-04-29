@@ -16,6 +16,7 @@ regions:
   content_top: 'Content Top'
   content: 'Content'
   sidebar: 'Sidebar'
+  sidebar_bottom: 'Sidebar Bottom'
   content_bottom: 'Content Bottom'
   feature: 'Feature'
   bottom: 'Bottom'
