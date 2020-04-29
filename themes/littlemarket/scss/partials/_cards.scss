@@ -10,10 +10,6 @@ body {
                 border: 2px solid $raspberry;
                 color: #000;
             }
-            a {
-                font-weight: bold;
-                text-decoration: underline;
-            }
         }
         &.avocado {
             background: $avocado;
@@ -21,10 +17,6 @@ body {
             &.outline {
                 background: transparent;
                 border: 2px solid $avocado;
-            }
-            a {
-                font-weight: bold;
-                text-decoration: underline;
             }
         }
         &.gray {            
@@ -34,15 +26,25 @@ body {
                 background: transparent;
                 border: 2px solid $gray;
             }
-            a {
-                font-weight: bold;
-                text-decoration: underline;
-            }
         }
         p {
             &:last-child {
                 margin-bottom: 0;
-            }    
+            }  
+            a {
+                &:not(.btn) {
+                    font-weight: bold;
+                    text-decoration: underline;
+                }
+            }  
         }
     } 
+    .sidebar {
+        .card {
+            .btn {
+                display: block;
+                margin-bottom: 10px;
+            }
+        }
+    }
 }

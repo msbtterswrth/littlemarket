@@ -33,7 +33,7 @@
             text-align: center;
             width: 100%;
             @include translate(0,-50%);
-            @include breakpoint(xs) {
+            @include breakpoint(smmax) {
                 margin: 160px auto 80px;
                 position: relative;
                 top: 0;
@@ -42,7 +42,7 @@
             h1 {
                 color: #fff;
                 margin: 20px 0 30px;
-                @include breakpoint(xs) {
+                @include breakpoint(smmax) {
                     font-size: 36px; 
                     line-height: 42px;
                     margin-right: 20px 0;

@@ -17,7 +17,9 @@
     @include transition(background .3s linear, color .3s linear);
     &.small {
         font-size:16px;
+        letter-spacing: 0;
         padding:10px 20px;
+        text-transform: none;
     }
     &.large {
         font-size:18px;
