@@ -1,0 +1,54 @@
+.grid {
+    display: grid;
+    grid-gap: 15px;
+    grid-template-rows: auto;
+    align-items: stretch;
+    justify-items: stretch;
+    width: 100%;
+    &::before, &::after {
+        display:none!important;
+    }
+    //GRID COLUMNS
+    &.one {        
+        grid-template-columns: repeat(1, 1fr);
+    }
+    &.two {        
+        grid-template-columns: repeat(2, 1fr);
+        &.right {
+            grid-template-columns: 33.33% 66.67%;
+            @include breakpoint(sm) {                
+                grid-template-columns: repeat(2, 1fr);
+            }
+            @include breakpoint(xs) {                
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+        &.left {
+            grid-template-columns:66.67% 33.33%;
+            @include breakpoint(sm) {                
+                grid-template-columns: repeat(2, 1fr);
+            }
+            @include breakpoint(xs) {                
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    }
+    &.three {        
+        grid-template-columns: repeat(3, 1fr);
+        @include breakpoint(sm) {            
+            grid-template-columns: repeat(2, 1fr);
+        }
+        @include breakpoint(xs) {            
+            grid-template-columns: repeat(1, 1fr);
+        }
+    }
+    &.four {        
+        grid-template-columns: repeat(4, 1fr);
+        @include breakpoint(sm) {            
+            grid-template-columns: repeat(2, 1fr);
+        }
+        @include breakpoint(xs) {            
+            grid-template-columns: repeat(1, 1fr);
+        }
+    }
+}
