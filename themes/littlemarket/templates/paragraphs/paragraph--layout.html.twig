@@ -1,0 +1,9 @@
+{% extends 'paragraph.html.twig' %}
+{% block content %}
+{% set layout = paragraph.field_layout.value %}
+  <div class="item-grid">
+    <div class="clearfix grid {{layout}}">
+        {{content.field_items}}
+    </div>
+  </div>
+{% endblock %}
