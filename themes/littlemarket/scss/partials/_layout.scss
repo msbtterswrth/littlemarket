@@ -11,12 +11,12 @@
     }
     //GRID COLUMNS
     &.one {        
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: repeat(1, 100%);
     }
     &.two {        
         grid-template-columns: repeat(2, 50%);
         @include breakpoint(xs) {                
-            grid-template-columns: repeat(1, 1fr);
+            grid-template-columns: repeat(1, 100%);
         }
         &.right {
             grid-template-columns: 33.33% 66.67%;
@@ -24,7 +24,7 @@
                 grid-template-columns: repeat(2, 50%);
             }
             @include breakpoint(xs) {                
-                grid-template-columns: repeat(1, 1fr);
+                grid-template-columns: repeat(1, 100%);
             }
         }
         &.left {
@@ -33,7 +33,7 @@
                 grid-template-columns: repeat(2, 50%);
             }
             @include breakpoint(xs) {                
-                grid-template-columns: repeat(1, 1fr);
+                grid-template-columns: repeat(1, 100%);
             }
         }
     }
@@ -43,7 +43,7 @@
             grid-template-columns: repeat(2, 50%);
         }
         @include breakpoint(xs) {            
-            grid-template-columns: repeat(1, 1fr); 
+            grid-template-columns: repeat(1, 100%); 
         }
     }
     &.four {        
@@ -52,7 +52,7 @@
             grid-template-columns: repeat(2, 50%);
         }
         @include breakpoint(xs) {            
-            grid-template-columns: repeat(1, 1fr);
+            grid-template-columns: repeat(1, 100%);
         }
     }
     .slick {
