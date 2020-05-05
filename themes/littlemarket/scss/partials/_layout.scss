@@ -19,7 +19,7 @@
             grid-template-columns: repeat(1, 100%);
         }
         &.right {
-            grid-template-columns: 33.33% 66.67%;
+            grid-template-columns: 40% 60%;
             @include breakpoint(sm) {                
                 grid-template-columns: repeat(2, 50%);
             }
@@ -28,7 +28,7 @@
             }
         }
         &.left {
-            grid-template-columns:66.67% 33.33%;
+            grid-template-columns:60% 40%;
             @include breakpoint(sm) {                
                 grid-template-columns: repeat(2, 50%);
             }
