@@ -65,6 +65,15 @@
                     font-style: italic;
                     line-height: 21px;
                 }
+                a {
+                    &.btn {
+                        + .btn {
+                            @include breakpoint(xs) {
+                                margin-top: 15px;
+                            }
+                        }
+                    }
+                }
             }
         }
         &.alt {

@@ -155,31 +155,30 @@ header {
                     display: block;
                 }
             }
-            .mobile-menu {
-                background: #000;
-                display: none;
-                height: 100vh;
-                left: 100%;
-                padding: 30px;
-                position: fixed;
-                top: 0;
-                width: 60vw;
-                @include breakpoint(smmax) {
+        }
+    }    
+    .mobile-menu {
+        background: #000;
+        display: none;
+        left: 0;
+        padding: 50px 30px 30px;
+        position: fixed;
+        top: 90px;
+        width: 100vw;
+        .menu-open &{
+            display: block;
+        }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            li {
+                display: block;
+                a {
+                    color: #fff;
                     display: block;
-                }
-                ul {
-                    list-style-type: none;
-                    margin: 0;
-                    padding: 0;
-                    li {
-                        display: block;
-                        a {
-                            color: #fff;
-                            display: block;
-                            font-size: 21px;
-                            margin-bottom: 10px;
-                        }
-                    }
+                    font-size: 21px;
+                    margin-bottom: 10px;
                 }
             }
         }
@@ -188,12 +187,5 @@ header {
 body {
     @include breakpoint(xs){
         overflow-x: hidden;
-        @include transition(transform .3s $cubic);
-    }
-    &.menu-open {
-        @include breakpoint(xs){
-            @include translate(-60vw,0);
-            overflow: hidden;
-        }
     }
 }
