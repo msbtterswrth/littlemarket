@@ -15,9 +15,7 @@
  */
 #}
 {% if content %}
-  <div{{ attributes.setAttribute('id', 'region-' ~ region|clean_id) }}>
     {% block content %}
     {{ content }}
     {% endblock %}
-  </div>
 {% endif %}
