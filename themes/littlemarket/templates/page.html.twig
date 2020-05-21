@@ -43,6 +43,7 @@
         <div class="navigation">
             <div class="container">
                 <div class="inner">
+                {{ page.header}}
                     <div class="logo"><a href="/" aria-label="click to return home"><img src="/sites/default/files/logo-text.png"></a></div>
                     <nav>
                         <ul>
@@ -64,13 +65,7 @@
             </div>
         </div>
         <div class="mobile-menu">
-            <ul>
-{#                <li><a href="https://order.hazlnut.com/?b=little_market_cafe" target="_blank">Order Online</a></li>#}
-                <li><a href="/current-offerings">Menu</a></li>
-    {#                            <li><a href="/events">Events</a></li>#}
-                <li><a href="/gordon-ramsay-shines-light-ellicott-city">Watch us on TV</a></li>
-                                <li><a href="/about-us">About</a></li>
-            </ul>
+            {{ page.offcanvas }}
         </div>
     </header>
 {% endif %} 
@@ -177,12 +172,3 @@
     </section>
 {% endif %} 
 </div>
-{% if page.offcanvas %}
-    <section class="offcanvas">
-        <div class="container-fluid">
-            <div class="row">
-                {{ page.offcanvas }}
-            </div>
-        </div>
-    </section>
-{% endif %} 
