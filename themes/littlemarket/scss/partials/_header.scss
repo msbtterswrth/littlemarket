@@ -71,18 +71,14 @@ header {
         }
         .inner {
             display:grid;
-            grid: auto-flow dense / auto 350px auto;
+            grid: auto-flow dense / 250px auto;
             @include breakpoint(smmax) {
                 grid: auto-flow dense / auto auto;
             }
             .logo {
-                grid-column-start:2;
-                place-self: start center;
                 width: 250px;
                 @include transition(width .3s linear);
                 @include breakpoint(smmax) {
-                    grid-column-start:1;
-                    place-self: center start;
                     width: 200px;
                 }
                 .up &{
@@ -114,7 +110,6 @@ header {
                             color: #fff;
                             font-family: $script;
                             font-size:21px;
-                            letter-spacing: 1.5px;
                             text-transform: uppercase;
                             text-decoration: none;
                             @include transition(font-size .3s linear, color .3s linear);
@@ -140,6 +135,7 @@ header {
                             }
                             .up &{
                                 font-size: 16px;
+                                letter-spacing: 1.5px;
                             }
                         }
                     }
