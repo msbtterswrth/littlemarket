@@ -25,5 +25,11 @@
 /sites/example.sites.php
 /sites/example.settings.local.php
 /sites/development.services.yml
+<<<<<<< HEAD
 /sites/default/settings.php
+=======
+/sites/default/default.settings.php
+/sites/default/settings.php
+
+>>>>>>> updates/5.20.20
 /themes/.sass-cache
