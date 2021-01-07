@@ -106,6 +106,45 @@ header {
                         + li {
                             margin-left: 25px;
                         }
+                        &.parent {
+                            position: relative;
+                            &::after {
+                                content: "/f107";
+                                font-family: icomoon;
+                            }
+                            &.hover, &.open {
+                                > ul {
+                                    display: block;
+                                }
+                            }
+                            > ul {
+                                background: $red;
+                                display: none;
+                                padding: 15px 20px;
+                                position: absolute;
+                                right: 0;
+                                text-align: left;
+                                width: 200px;
+                                li {
+                                    margin: 0;
+                                    a {
+                                        display: block;
+                                        font-family: $sans;
+                                        font-size: 18px;
+                                        margin-bottom: 10px;
+                                        text-transform: none;
+                                        letter-spacing: 0;
+                                        &:hover, &:focus {
+                                            color: #000;
+                                        }
+                                    }
+                                    + li {
+                                        border-top: 1px solid $salmon;
+                                        padding-top: 10px;
+                                    }
+                                }
+                            }
+                        }
                         a {
                             color: #fff;
                             font-family: $script;
