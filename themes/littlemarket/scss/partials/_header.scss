@@ -109,10 +109,14 @@ header {
                         &.parent {
                             position: relative;
                             &::after {
-                                content: "/f107";
+                                color: #fff;
+                                content: "\f107";
                                 font-family: icomoon;
+                                font-size: 26px;
+                                margin-left: 5px;
+                                vertical-align: -3px;
                             }
-                            &.hover, &.open {
+                            &:hover, &:focus, &.open {
                                 > ul {
                                     display: block;
                                 }
@@ -139,7 +143,7 @@ header {
                                         }
                                     }
                                     + li {
-                                        border-top: 1px solid $salmon;
+                                        border-top: 1px solid $raspberry;
                                         padding-top: 10px;
                                     }
                                 }
